@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IIbdProps } from './IIbdProps';
-import { escape } from '@microsoft/sp-lodash-subset';
 import App from './App';
+import "./App.css";
 
 export default class Ibd extends React.Component<IIbdProps, {}> {
   public render(): React.ReactElement<IIbdProps> {
@@ -14,7 +14,7 @@ export default class Ibd extends React.Component<IIbdProps, {}> {
     } = this.props;
 
     return (
-      <div><h2>Well done, {escape(userDisplayName)}!</h2>
+      <div className='boxShadow'><h2 className='mainPageHeading'>Raise Project Request</h2>
       <App userDisplayName={userDisplayName}></App></div>
     );
   }

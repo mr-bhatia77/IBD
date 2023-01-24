@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "ibd-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/ibd/IbdWebPart.js",
+          "manifest": "./src/webparts/ibd/IbdWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "IbdWebPartStrings": "lib/webparts/ibd/loc/{locale}.js"
+  }
+}

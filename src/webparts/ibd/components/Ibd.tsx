@@ -14,8 +14,7 @@ export default class Ibd extends React.Component<IIbdProps, {}> {
     } = this.props;
 
     return (
-      <div className='boxShadow'><h2 className='mainPageHeading'>Raise Project Request</h2>
-      <App userDisplayName={userDisplayName}></App></div>
+      <App userDisplayName={userDisplayName}></App>
     );
   }
 }

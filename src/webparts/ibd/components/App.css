@@ -1,34 +1,26 @@
-.my-form {
-  margin: 20px;
+
+.nav-link {
+  color: #333333;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease-in-out;
 }
 
-.my-form-button {
-  background-color: blue;
-  color: white;
+.nav-link.active,
+.nav-link:hover {
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
 }
 
-.form-label {
-  font-size: larger;
-  font-weight: 500;
-}
-
-.mainPageHeading {
-  text-align: center;
-  color: white;
-  padding: 8px;
-  background: rgb(2, 0, 36);
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(9, 9, 121, 1) 35%,
-    rgba(0, 212, 255, 1) 100%
-  );
-}
-
-.boxShadow {
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  padding-bottom: 10px;
-  background-color: ghostwhite;
-  margin:auto;
-  width:75%;
+.tab-content {
+  border: none;
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 0.25rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

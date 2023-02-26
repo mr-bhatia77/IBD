@@ -29,3 +29,8 @@
     border: solid 1px black;
     border-radius: 10px;
   }
+
+  .boldItalicText {
+    font-weight :bold;
+    font-style: italic;
+  }

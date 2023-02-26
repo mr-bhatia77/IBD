@@ -1,6 +1,8 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, FormGroup, Button, Row, Col } from "react-bootstrap";
+import AxiosInstance from "../services/AxiosInstance";
+import { siteNameOptionsMaker } from "../services/commonFunctions";
 import './ProjectRequestForm.css';
 interface IProjectRequestForm {
     userDisplayName: string
@@ -11,25 +13,52 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
     const [projectName, setProjectName] = useState("");
     const [bloodSampleCount, setBloodSampleCount] = useState("");
     const [tissueSampleCount, setTissueSampleCount] = useState("");
-    const [siteName, setSiteName] = useState("");
+    const [siteName, setSiteName] = useState(null);
+    const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
+    const [siteNameOptions, setSiteNameOptions] = useState([<option value="Select Site Name" className="boldItalicText">Select Site Name</option>]);
+
+    useEffect(() => {
+      AxiosInstance.get('/meta/allEvents/fetchData').then((res)=>{
+        setSiteNameOptions(siteNameOptionsMaker(res?.data));
+
+      }).catch((error)=>{
+        console.log(error)
+      })
+    
+
+    }, [])
+    
+
+    useEffect(() => {
+        // console.log({projectName, bloodSampleCount, tissueSampleCount, siteName})
+        if (projectName && (bloodSampleCount || tissueSampleCount) && siteName) {
+            setSubmitDisabled(false);
+        }
+        else setSubmitDisabled(true);
+    }, [projectName, bloodSampleCount, tissueSampleCount, siteName])
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
         console.log(
-            userDisplayName,
-            projectName,
-            bloodSampleCount,
-            tissueSampleCount,
-            siteName
+            {
+                userDisplayName,
+                projectName,
+                bloodSampleCount,
+                tissueSampleCount,
+                siteName
+            }
         );
     };
 
     const handleReset = (e: any) => {
-        console.log("form reset");
+        setProjectName(null);
+        setBloodSampleCount(null);
+        setTissueSampleCount(null);
+        setSiteName(null);
     };
 
     const handleSiteChange = (e: any) => {
-        setSiteName(e.target.value);
+        setSiteName(e.target.value === 'Select Site Name' ? null : e.target.value)
     }
 
     return (<div className='boxShadow'><h2 className='mainPageHeading'>Raise Project Request</h2>
@@ -58,7 +87,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                         id="projectName"
                         placeholder="Enter project name"
                         value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
+                        onChange={(e) => setProjectName(e.target.value === '' ? null : e.target.value)}
                     />
                 </FormGroup>
             </Row>
@@ -72,7 +101,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                             id="bloodSampleCount"
                             placeholder="Enter blood sample count"
                             value={bloodSampleCount}
-                            onChange={(e) => setBloodSampleCount(e.target.value)}
+                            onChange={(e) => setBloodSampleCount(e.target.value === '' ? null : e.target.value)}
                         />
                     </FormGroup>
                 </Col>
@@ -87,7 +116,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                             id="tissueSampleCount"
                             placeholder="Enter tissue sample count"
                             value={tissueSampleCount}
-                            onChange={(e) => setTissueSampleCount(e.target.value)}
+                            onChange={(e) => setTissueSampleCount(e.target.value === '' ? null : e.target.value)}
                         />
                     </FormGroup>
                 </Col>
@@ -97,29 +126,20 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                     <Form.Group controlId="formSite">
                         <Form.Label>Site Name: </Form.Label>
                         <Form.Select value={siteName} onChange={handleSiteChange}>
-                            <option value="site1">Site 1</option>
-                            <option value="site2">Site 2</option>
-                            <option value="site3">Site 3</option>
-                            <option value="site4">Site 4</option>
-                            <option value="site5">Site 5</option>
-                            <option value="site6">Site 6</option>
-                            <option value="site7">Site 7</option>
-                            <option value="site8">Site 8</option>
-                            <option value="site9">Site 9</option>
-                            <option value="site10">Site 10</option>
+                            {siteNameOptions}
                         </Form.Select>
                     </Form.Group>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-md-center">
                 <Col xs={4}>
-                    <Button variant="success" type="submit">
+                    <Button variant="success" type="submit" disabled={submitDisabled}>
                         Add Project Request
                     </Button>
                 </Col>
                 <Col xs={3}>
                     <Button variant="primary" type="reset">
-                        Clear Data
+                        Reset Form
                     </Button>
                 </Col>
             </Row>

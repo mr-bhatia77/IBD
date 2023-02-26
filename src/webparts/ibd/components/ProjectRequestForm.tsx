@@ -31,7 +31,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
 
     useEffect(() => {
         // console.log({projectName, bloodSampleCount, tissueSampleCount, siteName})
-        if (projectName && (bloodSampleCount || tissueSampleCount) && siteName) {
+        if (projectName && ((Number(bloodSampleCount) + Number(tissueSampleCount))>0) && siteName) {
             setSubmitDisabled(false);
         }
         else setSubmitDisabled(true);
@@ -39,18 +39,16 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        console.log(
-            {
-                userDisplayName,
-                projectName,
-                bloodSampleCount,
-                tissueSampleCount,
-                siteName
-            }
-        );
+        console.log( {userDisplayName,projectName,bloodSampleCount,tissueSampleCount,siteName});
+        
+        setProjectName('');
+        setBloodSampleCount('');
+        setTissueSampleCount('');
+        setSiteName('Select Site Name');
     };
 
     const handleReset = (e: any) => {
+        console.log('hello from reset')
         setProjectName(null);
         setBloodSampleCount(null);
         setTissueSampleCount(null);
@@ -101,6 +99,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                             id="bloodSampleCount"
                             placeholder="Enter blood sample count"
                             value={bloodSampleCount}
+                            min={0}
                             onChange={(e) => setBloodSampleCount(e.target.value === '' ? null : e.target.value)}
                         />
                     </FormGroup>
@@ -116,6 +115,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({ user
                             id="tissueSampleCount"
                             placeholder="Enter tissue sample count"
                             value={tissueSampleCount}
+                            min={0}
                             onChange={(e) => setTissueSampleCount(e.target.value === '' ? null : e.target.value)}
                         />
                     </FormGroup>

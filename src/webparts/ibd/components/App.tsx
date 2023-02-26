@@ -17,10 +17,10 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
   return (
     <Container>
       <Tabs id="my-tabs" activeKey={key} onSelect={(k) => setKey(k)}>
-        <Tab eventKey="tab1" title="Tab 1">
+        <Tab eventKey="tab1" title="Raise Sample Request">
           <ProjectRequestForm userDisplayName={userDisplayName}></ProjectRequestForm>
         </Tab>
-        <Tab eventKey="tab2" title="Tab 2">
+        <Tab eventKey="tab2" title="IBD BioSample Mapping">
           <AdminDashBoard></AdminDashBoard>
         </Tab>
       </Tabs>

@@ -23,13 +23,13 @@ function Dashboard() {
   };
 
   return (
-    <Table striped bordered hover variant="blue">
-      <thead>
+    <Table striped bordered hover >
+      <thead style={{backgroundColor:'blue',color:'white'}}>
         <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Age</th>
-          <th>Email</th>
+          <th>ID</th>
+          <th>Sample ID</th>
+          <th>Sample Type</th>
+          <th>Site Name</th>
           <th>Checkbox</th>
         </tr>
       </thead>

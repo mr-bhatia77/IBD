@@ -3,6 +3,7 @@ import * as React from "react";
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import ProjectRequestForm from "./ProjectRequestForm";
+import ProjectRequestForm2 from "./ProjectRequestForm2";
 import AdminDashBoard from "./AdminDashBoard";
 import { Tabs, Tab } from 'react-bootstrap';
 
@@ -22,6 +23,9 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
         </Tab>
         <Tab eventKey="tab2" title="IBD BioSample Mapping">
           <AdminDashBoard></AdminDashBoard>
+        </Tab>
+        <Tab eventKey="tab3" title="new form">
+          <ProjectRequestForm2></ProjectRequestForm2>
         </Tab>
       </Tabs>
 

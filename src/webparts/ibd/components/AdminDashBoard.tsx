@@ -42,15 +42,16 @@ function Dashboard() {
             </Form.Select>
           </Form.Group>
 
+          <Form.Group as={Col} controlId="projectStatus">
+            <Form.Label>Project Status:</Form.Label>
+            <Form.Control type="text" disabled />
+          </Form.Group>
+
           <Form.Group as={Col} controlId="siteName">
             <Form.Label>Site name:</Form.Label>
             <Form.Control type="text" disabled />
           </Form.Group>
 
-          <Form.Group as={Col} controlId="projectStatus">
-            <Form.Label>Project Status:</Form.Label>
-            <Form.Control type="text" disabled />
-          </Form.Group>
         </Row>
         <Row className='mb-3'>
           <Form.Group as={Col} controlId="sampleType">

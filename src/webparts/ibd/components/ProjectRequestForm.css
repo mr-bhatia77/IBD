@@ -17,8 +17,7 @@
     padding: 8px;
     color: white;
     border-radius: 10px 10px 0px 0px;
-    background: rgb(34,193,195);
-    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(0,0,130,1) 100%, rgba(255,255,255,0.7849264705882353) 100%);
+    background: royalblue;
     
   }
   
@@ -33,4 +32,15 @@
   .boldItalicText {
     font-weight :bold;
     font-style: italic;
+  }
+
+  .sampleListBorder {
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .sampleListHeader {
+    padding: 10px;
+    background-color: lightgray;
   }

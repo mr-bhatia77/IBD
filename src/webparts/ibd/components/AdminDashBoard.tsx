@@ -1,33 +1,33 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { Table } from 'react-bootstrap';
+// import { useState } from 'react';
+// import { Table } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
 
 const projectOptions = ['Select Project','Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5'];
 
 function Dashboard() {
-  const [data, setData] = useState([
-    { id: 1, sampleId:'S1', type: 'blood', checked: false },
-    { id: 2, sampleId:'S2', type: 'tissue', checked: false },
-    { id: 3, sampleId:'S3', type: 'blood', checked: false },
-    { id: 4, sampleId:'S4', type: 'tissue', checked: false },
-    { id: 5, sampleId:'S5', type: 'blood', checked: false },
-    { id: 6, sampleId:'S6', type: 'tissue', checked: false },
-    { id: 7, sampleId:'S7', type: 'blood', checked: false },
-    { id: 8, sampleId:'S8', type: 'tissue', checked: false },
-  ]);
+  // const [data, setData] = useState([
+  //   { id: 1, sampleId:'S1', type: 'blood', checked: false },
+  //   { id: 2, sampleId:'S2', type: 'tissue', checked: false },
+  //   { id: 3, sampleId:'S3', type: 'blood', checked: false },
+  //   { id: 4, sampleId:'S4', type: 'tissue', checked: false },
+  //   { id: 5, sampleId:'S5', type: 'blood', checked: false },
+  //   { id: 6, sampleId:'S6', type: 'tissue', checked: false },
+  //   { id: 7, sampleId:'S7', type: 'blood', checked: false },
+  //   { id: 8, sampleId:'S8', type: 'tissue', checked: false },
+  // ]);
 
-  const handleCheckboxChange = (id: number) => {
-    setData(
-      data.map((item) => {
-        if (item.id === id) {
-          return { ...item, checked: !item.checked };
-        } else {
-          return item;
-        }
-      })
-    );
-  };
+  // const handleCheckboxChange = (id: number) => {
+  //   setData(
+  //     data.map((item) => {
+  //       if (item.id === id) {
+  //         return { ...item, checked: !item.checked };
+  //       } else {
+  //         return item;
+  //       }
+  //     })
+  //   );
+  // };
 
   return (
     <>
@@ -69,7 +69,7 @@ function Dashboard() {
           </Form.Group>
         </Row>
       </Form>
-      <Table striped bordered hover >
+      {/* <Table striped bordered hover >
         <thead style={{ backgroundColor: 'blue', color: 'white' }}>
           <tr>
             <th>S.No</th>
@@ -90,7 +90,7 @@ function Dashboard() {
             </tr>
           ))}
         </tbody>
-      </Table>
+      </Table> */}
     </>
   );
 }

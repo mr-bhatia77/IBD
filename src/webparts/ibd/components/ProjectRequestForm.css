@@ -43,4 +43,6 @@
   .sampleListHeader {
     padding: 10px;
     background-color: lightgray;
+    margin-right:0px !important;
+    margin-left:0px !important;
   }

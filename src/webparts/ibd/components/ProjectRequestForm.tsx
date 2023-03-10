@@ -17,6 +17,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   const [projectId, setProjectId] = useState("P-0001");
   const [researcherName, setResearcherName] = useState("");
   const [instituteName, setInstituteName] = useState(null);
+  const [isNewRequest,setIsNewRequest] = useState<boolean>(true);
   // const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
 
   useEffect(() => {
@@ -51,7 +52,11 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
 
   return (
     <div className="boxShadow">
-      <h2 className="mainPageHeading">Raise Project Request</h2>
+      <h2 className="mainPageHeading mb-3">Raise Project Request</h2>
+      <div className="flex alignCenter">
+      <Button className={isNewRequest?'button1 buttonSelected':'button1 buttonNotSelected'} onClick={()=>setIsNewRequest(true)}>Raise New Request</Button>
+      <Button className={isNewRequest?'button2 buttonNotSelected':'button2 buttonSelected'} onClick={()=>setIsNewRequest(false)}>Edit Existing Request</Button>
+      </div>
       <Form onSubmit={handleSubmit} className="my-form" onReset={handleReset}>
         <Row>
           <Col xs={9}>
@@ -135,12 +140,12 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
         <Row className="mb-3 justify-content-md-center">
           <Col xs={4}>
             <Button variant="success" type="submit" disabled={false}>
-              Add Project Request
+              Submit Project Request
             </Button>
           </Col>
           <Col xs={3}>
             <Button variant="primary" type="reset">
-              Submit Request
+              Reset
             </Button>
           </Col>
         </Row>

@@ -26,6 +26,37 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.flex{
+  display: flex;
+}
+
+.alignCenter {
+  justify-content: center;
+  align-items: center;
+}
+
+.button1 {
+  border-radius: 20px 0 0 20px !important;
+}
+
+.button2 {
+  border-radius: 0 20px 20px 0 !important;
+}
+.button1:hover, .button2:hover{
+ color:white;
+}
+
+.buttonNotSelected {
+  background-color: grey;
+  color: black;
+  border:0px !important;
+}
+
+.buttonSelected {
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) !important; 
+  border: 3px solid #0D6EF2;
+}
+/* ---------------------------------------------------------------------------- */
 .button-label {
   display: inline-block;
   padding: 10px 20px;

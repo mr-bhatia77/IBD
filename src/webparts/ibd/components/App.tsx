@@ -6,6 +6,7 @@ import ProjectRequestForm from "./ProjectRequestForm";
 // import ProjectRequestForm2 from "./ProjectRequestForm2";
 import AdminDashBoard from "./AdminDashBoard";
 import { Tabs, Tab } from 'react-bootstrap';
+import { SearchBox } from "./SearchBox";
 
 interface IApp {
   userDisplayName: string;
@@ -24,13 +25,10 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
          <Tab eventKey="tab2" title="IBD BioSample Mapping">
           <AdminDashBoard></AdminDashBoard>
         </Tab>
-        {/* <Tab eventKey="tab3" title="new form">
-          <ProjectRequestForm2></ProjectRequestForm2>
-        </Tab> */}
+        <Tab eventKey="tab3" title="SearchBox">
+          <SearchBox></SearchBox>
+        </Tab>
       </Tabs>
-
-
-
     </Container>
   )
 }

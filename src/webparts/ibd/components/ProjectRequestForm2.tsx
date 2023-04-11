@@ -15,7 +15,7 @@ interface IProjectRequestForm {
   userDisplayName: string;
 }
 
-const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
+const ProjectRequestForm2: React.FunctionComponent<IProjectRequestForm> = ({
   userDisplayName,
 }) => {
   const [projectList, setProjectList] = useState([]);
@@ -43,7 +43,6 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
 
-
   useEffect(() => {
     //call for sample list & remove the other useEffect to find sample types
     setAllSampleList(
@@ -52,10 +51,10 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   }, []);
 
   useEffect(() => {
-    const temp:any ={}
-    allSampleList.forEach((sample)=>{
-      temp[`${sample.sampleName}`]=sample.sampleId;
-    })
+    const temp: any = {};
+    allSampleList.forEach((sample) => {
+      temp[`${sample.sampleName}`] = sample.sampleId;
+    });
     setSampleDetailsHashMap(temp);
     // console.log(sampleDetailsHashMap)
     setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
@@ -72,17 +71,16 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   //   console.log(sampleDetailsHashMap)
   // },[allSampleList])
 
-
   useEffect(() => {
     console.log(projectSampleList);
   }, [projectSampleList]);
 
   const handleAdd = () => {
-    console.log(sampleDetailsHashMap)
+    console.log(sampleDetailsHashMap);
     setProjectSampleList([
       ...projectSampleList,
       {
-        sampleId:sampleDetailsHashMap[`${newSampleName}`],
+        sampleId: sampleDetailsHashMap[`${newSampleName}`],
         sampleType: newSampleType,
         sampleName: newSampleName,
         sampleCount: newSampleCount,
@@ -266,112 +264,90 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
           </Col>
         </Row>
         {/* sample select */}
-        <Row style={{marginLeft:'0px'}}>
+        <Row style={{ marginLeft: "0px" }}>
           <Row className="mb-3 sampleListBorder">
-           
             <Row className="mb-3">
               {/* <Col xs={{ span: 10, offset: 1 }}> */}
-              {projectSampleList.length ? (
-                <Table striped bordered hover>
-                  <thead style={{ backgroundColor: "blue", color: "white" }}>
-                    <tr>
-                      <th>S.No</th>
-                      <th>Sample Type</th>
-                      <th>Sample Name</th>
-                      <th>No. of Samples</th>
-                      <th>Delete</th>
+              <Table striped bordered hover>
+                <thead style={{ backgroundColor: "blue", color: "white" }}>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Sample Type</th>
+                    <th>Sample Name</th>
+                    <th>No. of Samples</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projectSampleList?.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.sampleType}</td>
+                      <td>{item.sampleName}</td>
+                      <td>
+                        <input
+                          type="text"
+                          value={item.sampleCount}
+                          onChange={(event) => handleCountChange(event, index)}
+                        ></input>
+                      </td>
+                      <td>
+                        <Button
+                          variant="danger"
+                          onClick={() => deleteSample(item.sampleName)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {projectSampleList?.map((item, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item.sampleType}</td>
-                        <td>{item.sampleName}</td>
-                        <td>
-                          <input
-                            type="text"
-                            value={item.sampleCount}
-                            onChange={(event) =>
-                              handleCountChange(event, index)
-                            }
-                          ></input>
-                        </td>
-                        <td>
-                          <Button
-                            variant="danger"
-                            onClick={() => deleteSample(item.sampleName)}
-                          >
-                            <DeleteIcon />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <div className="flex alignCenter">
-                  <h6>No samples are selected ! Please add samples.</h6>
-                </div>
-              )}
+                  ))}
+                  <tr key={projectSampleList?.length + 1}>
+                    <td>{projectSampleList?.length + 1}</td>
+                    <td>
+                      <Form.Select
+                        value={newSampleType}
+                        onChange={(e) => setNewSampleType(e.target.value)}
+                      >
+                        {allSampleType.map((sampleType) => (
+                          <option key={sampleType}>{sampleType}</option>
+                        ))}
+                      </Form.Select>
+                    </td>
+                    <td>
+                      <Form.Select
+                        value={newSampleName}
+                        onChange={(e) => setNewSampleName(e.target.value)}
+                      >
+                        {sampleNameList}
+                      </Form.Select>
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="number"
+                        min={1}
+                        step={1}
+                        value={newSampleCount}
+                        onChange={(e) => setNewSampleCount(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <Button
+                        variant="primary"
+                        onClick={handleAdd}
+                        disabled={
+                          newSampleType === "Select Type" ||
+                          newSampleName === "Select Sample" ||
+                          Number(newSampleCount) < 1
+                        }
+                      >
+                        + ADD
+                      </Button>
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+
               {/* </Col> */}
-            </Row>
-            <Row className="mb-3 sampleListHeader">
-              <Row className="mb-3">
-                <Col xs={2}>
-                  <Form.Group as={Col}>
-                    <Form.Label>Sample type:</Form.Label>
-                    <Form.Select
-                      value={newSampleType}
-                      onChange={(e) => setNewSampleType(e.target.value)}
-                    >
-                      {allSampleType.map((sampleType) => (
-                        <option key={sampleType}>{sampleType}</option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col xs={7}>
-                  <Form.Group as={Col}>
-                    <Form.Label>Sample Name:</Form.Label>
-                    <Form.Select
-                      value={newSampleName}
-                      onChange={(e)=>setNewSampleName(e.target.value)}
-                    >
-                      {sampleNameList}
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col xs={2}>
-                  <Form.Group as={Col}>
-                    <Form.Label>Count:</Form.Label>
-                    <Form.Control
-                      type="number"
-                      min={1}
-                      step={1}
-                      value={newSampleCount}
-                      onChange={(e) => setNewSampleCount(e.target.value)}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col xs={1} style={{display:'flex', alignItems:'end' }}>
-                  <Button
-                    style={{ width: "100%"}}
-                    variant="primary"
-                    onClick={handleAdd}
-                    disabled={
-                      newSampleType === "Select Type" ||
-                      newSampleName === "Select Sample" ||
-                      Number(newSampleCount) < 1
-                    }
-                  >
-                    + ADD
-                  </Button>
-                </Col>
-              </Row>
-              {/* <Row className="mb-3">
-                
-              </Row> */}
             </Row>
           </Row>
         </Row>
@@ -397,4 +373,4 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   );
 };
 
-export default ProjectRequestForm;
+export default ProjectRequestForm2;

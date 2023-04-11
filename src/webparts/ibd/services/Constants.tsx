@@ -1,206 +1,206 @@
 export const sampleListConst = [
     {
-      "id": 1,
+      "sampleId": 1,
       "sampleType": "Blood",
       "sampleName": "PBMCs-NuncCryo 1.8"
     },
     {
-      "id": 2,
+      "sampleId": 2,
       "sampleType": "Blood",
       "sampleName": "Plasma-0.5mL micronic"
     },
     {
-      "id": 3,
+      "sampleId": 3,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-Micronic 1.4"
     },
     {
-      "id": 4,
+      "sampleId": 4,
       "sampleType": "Blood",
       "sampleName": "RNA (in PAXgene tubes to be isolated)-2.5mL PAXgene RNA Vacutainer Tube"
     },
     {
-      "id": 5,
+      "sampleId": 5,
       "sampleType": "Blood",
       "sampleName": "Plasma-3.0 mL No Additive (Z) Tubes"
     },
     {
-      "id": 6,
+      "sampleId": 6,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-NuncCryo 2.0"
     },
     {
-      "id": 7,
+      "sampleId": 7,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-7 ml EDTA tube - DNA"
     },
     {
-      "id": 8,
+      "sampleId": 8,
       "sampleType": "Blood",
       "sampleName": "PBMCs-10.0 mL Green Top Tube"
     },
     {
-      "id": 9,
+      "sampleId": 9,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-6.0 mL Purple Top Tube"
     },
     {
-      "id": 10,
+      "sampleId": 10,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-Micronic 0.75"
     },
     {
-      "id": 11,
+      "sampleId": 11,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-Matrix 0.75"
     },
     {
-      "id": 12,
+      "sampleId": 12,
       "sampleType": "Blood",
       "sampleName": "Plasma-0.5ml micronic"
     },
     {
-      "id": 13,
+      "sampleId": 13,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-6 ml EDTA tube - DNA"
     },
     {
-      "id": 14,
+      "sampleId": 14,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-Sarstedt 2.0"
     },
     {
-      "id": 15,
+      "sampleId": 15,
       "sampleType": "Blood",
       "sampleName": "DNA extraction-10.0 mL Green Top Tube"
     },
     {
-      "id": 16,
+      "sampleId": 16,
       "sampleType": "Blood",
       "sampleName": "PBMCs-6.0 mL Green Top Tube"
     },
     {
-      "id": 17,
+      "sampleId": 17,
       "sampleType": "Tissue",
       "sampleName": "LN2-1.8mL cryovials"
     },
     {
-      "id": 18,
+      "sampleId": 18,
       "sampleType": "Tissue",
       "sampleName": "RNA extraction-Micronic 0.75"
     },
     {
-      "id": 19,
+      "sampleId": 19,
       "sampleType": "Tissue",
       "sampleName": "Paraffin block (formalin fixed)-FFPE Cassette 4cm x 2.75cm"
     },
     {
-      "id": 20,
+      "sampleId": 20,
       "sampleType": "Tissue",
       "sampleName": "Slide from paraffin block (formalin fixed)-Slide"
     },
     {
-      "id": 21,
+      "sampleId": 21,
       "sampleType": "Tissue",
       "sampleName": "Formalin jar-Therapak 60 ml"
     },
     {
-      "id": 22,
+      "sampleId": 22,
       "sampleType": "Tissue",
       "sampleName": "RNAlater-1.5mL RNALater Tissue Tube"
     },
     {
-      "id": 23,
+      "sampleId": 23,
       "sampleType": "Tissue",
       "sampleName": "Formalin jar-Formalin Jar 60ml"
     },
     {
-      "id": 24,
+      "sampleId": 24,
       "sampleType": "Tissue",
       "sampleName": "LN2-1.5mL RNAlater Tissue Tube"
     },
     {
-      "id": 25,
+      "sampleId": 25,
       "sampleType": "Tissue",
       "sampleName": "RNAlater-1.5ml RNAlater Tissue Tube"
     },
     {
-      "id": 26,
+      "sampleId": 26,
       "sampleType": "Tissue",
       "sampleName": "Formalin jar-Formalin Jar 60mL"
     },
     {
-      "id": 27,
+      "sampleId": 27,
       "sampleType": "Tissue",
       "sampleName": "RNAlater-1.5mL RNAlater Tissue Tube"
     },
     {
-      "id": 28,
+      "sampleId": 28,
       "sampleType": "Tissue",
       "sampleName": "DNA extraction-Micronic 0.75"
     },
     {
-      "id": 29,
+      "sampleId": 29,
       "sampleType": "Tissue",
       "sampleName": "RNA extraction-PCR Well"
     },
     {
-      "id": 30,
+      "sampleId": 30,
       "sampleType": "Tissue",
       "sampleName": "DNA-Clear Cyovial 2.0 mL"
     },
     {
-      "id": 31,
+      "sampleId": 31,
       "sampleType": "Tissue",
       "sampleName": "RNA extraction-FluidX 0.70"
     },
     {
-      "id": 32,
+      "sampleId": 32,
       "sampleType": "Tissue",
       "sampleName": "Slide from paraffin block (formalin fixed)-Slide Stained"
     },
     {
-      "id": 33,
+      "sampleId": 33,
       "sampleType": "Tissue",
       "sampleName": "Formalin jar-700 mL Covidien Dover Commode"
     },
     {
-      "id": 34,
+      "sampleId": 34,
       "sampleType": "Stool",
       "sampleName": "No preservative-7.00 mL Sterlin Tube"
     },
     {
-      "id": 35,
+      "sampleId": 35,
       "sampleType": "Stool",
       "sampleName": "Ethanol-700 mL Covidien Dover Commode"
     },
     {
-      "id": 36,
+      "sampleId": 36,
       "sampleType": "Stool",
       "sampleName": "No preservative-FluidX Tissue 9.5"
     },
     {
-      "id": 37,
+      "sampleId": 37,
       "sampleType": "Stool",
       "sampleName": "No preservative-700 mL Covidien Dover Commode"
     },
     {
-      "id": 38,
+      "sampleId": 38,
       "sampleType": "Stool",
       "sampleName": "No preservative-Micronic 6"
     },
     {
-      "id": 39,
+      "sampleId": 39,
       "sampleType": "Stool",
       "sampleName": "No preservative-7mL Sterlin Tube"
     },
     {
-      "id": 40,
+      "sampleId": 40,
       "sampleType": "Stool",
       "sampleName": "Ethanol-Faeces Tube 76x20mm"
     },
     {
-      "id": 41,
+      "sampleId": 41,
       "sampleType": "Stool",
       "sampleName": "No preservative-Faeces Tube 76x20mm"
     }

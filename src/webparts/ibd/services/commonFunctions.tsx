@@ -38,8 +38,9 @@ export const instituteNameOptionsMaker = (instituteList: any[]) => {
   ];
   if (sampleList?.length) {
     sampleList.forEach((item: any) => {
+      // console.log(item)
       item && (item.sampleType === sampleType) && sampleListOptions.push(
-        <option value={item.sampleId}>{item.sampleName}</option>
+        <option value={item.sampleName}>{item.sampleName}</option>
       );
     });
   }

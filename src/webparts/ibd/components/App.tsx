@@ -6,7 +6,8 @@ import ProjectRequestForm from "./ProjectRequestForm";
 // import ProjectRequestForm2 from "./ProjectRequestForm2";
 import AdminDashBoard from "./AdminDashBoard";
 import { Tabs, Tab } from 'react-bootstrap';
-import { SearchBox } from "./SearchBox";
+import SearchBox  from "./SearchBox";
+import DynamicTable from "./DynamicTable";
 
 interface IApp {
   userDisplayName: string;
@@ -27,6 +28,9 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
         </Tab>
         <Tab eventKey="tab3" title="SearchBox">
           <SearchBox></SearchBox>
+        </Tab>
+        <Tab eventKey="tab4" title="DynamicTable">
+          <DynamicTable></DynamicTable>
         </Tab>
       </Tabs>
     </Container>

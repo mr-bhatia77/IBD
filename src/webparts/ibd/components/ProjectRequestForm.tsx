@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Form, FormGroup, Button, Row, Col } from "react-bootstrap";
-// import AxiosInstance from "../services/AxiosInstance";
+import AxiosInstance from "../services/AxiosInstance";
 import { instituteNameOptionsMaker,compare } from "../services/commonFunctions";
 import {instituteListCons} from '../services/Constants'
 import "./ProjectRequestForm.css";
@@ -13,8 +13,8 @@ interface IProjectRequestForm {
 const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   userDisplayName,
 }) => {
+  const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
-  // const [sampleList,setSampleList] = useState([])
   const [researcherName, setResearcherName] = useState("");
   const [instituteName, setInstituteName] = useState("Select Institute");
   const [instituteList,setInstituteList] = useState([<option value="Select Institute" className="boldItalicText">Select Institute</option>])
@@ -22,14 +22,17 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
   // const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
 
   useEffect(() => {
-    setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
-    // AxiosInstance.get("/meta/allEvents/fetchData")
-    //   .then((res) => {
-    //     setInstituteName(siteNameOptionsMaker(res?.data));
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
+    Promise.all([AxiosInstance.get("/ibd/projectList/fetchData"),AxiosInstance.get("/ibd/instituteList/fetchData")])
+      .then((res:any) => {
+        setProjectList(res[0]?.data);
+        setInstituteList(instituteNameOptionsMaker(res[1]?.data.sort((a:any,b:any)=>compare(a.instituteName,b.instituteName))));
+      })
+      .catch((error:any) => {
+        setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
+        console.log(error);
+      });
+      console.log(projectList)
   }, []);
 
   // useEffect(() => {
@@ -42,14 +45,25 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log({ userDisplayName, projectName, researcherName, instituteName });
-    setProjectName("");
-    setInstituteName("");
+    const payLoad = {projectName: projectName,researcherName:researcherName,instituteId:instituteName}
+    AxiosInstance.post('/ibd/add/project',payLoad).then((res:any)=>{
+      setProjectName("");
+      setInstituteName("");
+      setResearcherName("");
+    }).catch((error)=>{
+      console.log(error);
+      console.log(payLoad);
+      setProjectName("");
+      setInstituteName("");
+      setResearcherName("");
+    })
+
   };
 
   const handleReset = (e: any) => {
     setProjectName(null);
     setInstituteName(null);
+    setResearcherName("");
   };
 
   return (
@@ -60,23 +74,12 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
       <Button className={isNewRequest?'button2 buttonNotSelected':'button2 buttonSelected'} onClick={()=>setIsNewRequest(false)}>Edit Existing Request</Button>
       </div>
       <Form onSubmit={handleSubmit} className="my-form" onReset={handleReset}>
+        {/* <Row>
+          Welcome, {userDisplayName}
+        </Row> */}
+        <hr/>
         <Row>
-          <Col xs={9}>
-            <FormGroup className="mb-3">
-              <Form.Label for="username">Username: </Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                id="username"
-                placeholder="Enter username"
-                value={userDisplayName}
-                disabled
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-        <Col xs={9}>
+        <Col xs={6}>
           <FormGroup as={Col} className="mb-3">
             <Form.Label for="projectName">Project Name: </Form.Label>
             <Form.Control
@@ -111,7 +114,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
           </Col>
           <Col xs={6}>
           <Form.Group as={Col}>
-              <Form.Label>Institue Name:</Form.Label>
+              <Form.Label>Institute Name:</Form.Label>
               <Form.Select value={instituteName} onChange={(e) =>
                     setInstituteName(e.target.value)
                   }>

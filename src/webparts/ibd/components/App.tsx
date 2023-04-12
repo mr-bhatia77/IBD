@@ -16,7 +16,7 @@ interface IApp {
 
 const App: React.FC<IApp> = ({ userDisplayName }) => {
 
-  const [key, setKey] = useState('tab1');
+  const [key, setKey] = useState('tab4');
 
   return (
     <Container>

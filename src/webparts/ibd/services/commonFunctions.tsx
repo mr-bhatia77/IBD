@@ -14,6 +14,20 @@ export const instituteNameOptionsMaker = (instituteList: any[]) => {
     return instituteListOptions;
   };
 
+  export const projectNameOptionsMaker = (projectList: any[]) => {
+    const projectListOptions: any[] = [
+        <option value="Select Project" className="boldItalicText">Select Project</option>
+    ];
+    if (projectList?.length) {
+      projectList.forEach((item: any) => {
+        item && projectListOptions.push(
+          <option value={item.projectId}>{item.projectName}</option>
+        );
+      });
+    }
+    return projectListOptions;
+  };
+
   export  const compare = (a: any, b: any) => {
     if (a < b) {
       return -1;

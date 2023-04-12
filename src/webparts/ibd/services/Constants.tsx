@@ -388,3 +388,35 @@ export const instituteListCons = [
       "instituteName": "University of North Carolina Multidisciplinary IBD Center"
     }
   ]
+
+export const projectListCons = [
+    {
+        projectId:1,
+        projectName:'P0001'
+    },
+    {
+        projectId:2,
+        projectName:'P0002'
+    },
+    {
+        projectId:3,
+        projectName:'P003'
+    }
+
+]
+
+export const projectDetailsCons = {
+    projectId:1,
+    projectName:'P001',
+    instituteName:'XYZ',
+    researcherName:'Bharat',
+    "sampleRequestList":[{"sampleId":5,"sampleType":"Blood","sampleName":"Plasma-3.0 mL No Additive (Z) Tubes","sampleCount":"3"},{"sampleId":41,"sampleType":"Stool","sampleName":"No preservative-Faeces Tube 76x20mm","sampleCount":"1"}]
+}
+
+export const projectDetailsCons2 = {
+    projectId:2,
+    projectName:'P002',
+    instituteName:'ABC',
+    researcherName:'Bhyatia',
+    "sampleRequestList":[{"sampleId":41,"sampleType":"Stool","sampleName":"No preservative-Faeces Tube 76x20mm","sampleCount":"1"},{"sampleId":5,"sampleType":"Blood","sampleName":"Plasma-3.0 mL No Additive (Z) Tubes","sampleCount":"3"}]
+}

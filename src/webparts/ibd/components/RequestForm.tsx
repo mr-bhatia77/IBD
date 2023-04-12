@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { useState, useEffect } from "react";
-import { Form, FormGroup, Button, Row, Col, Table } from "react-bootstrap";
+import { Form, FormGroup, Button, Row, Col, Table,Modal, Alert } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import { instituteListCons, sampleListConst } from "../services/Constants";
+import { instituteListCons, sampleListConst,projectListCons } from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
@@ -17,6 +17,8 @@ const RequestForm = () => {
   const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [researcherName, setResearcherName] = useState("");
+  const [projectNameAlreadyExists,setProjectNameAlreadyExists] = useState(false);
+  const [projectListHashMap, setProjectListHashMap] = useState<any>({});
   const [instituteName, setInstituteName] = useState("");
   const [instituteList, setInstituteList] = useState([
     <option value="Select Institute" className="boldItalicText">
@@ -36,9 +38,11 @@ const RequestForm = () => {
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
   const [isReadyForSubmit,setIsReadyForSubmit] = useState(false);
+  const [show, setShow] = useState(false);
+
 
   useEffect(() => {
-    console.log('Request Form')
+    // console.log('Request Form')
     // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
     Promise.all([
       AxiosInstance.get("/projectList/fetchData"),
@@ -61,6 +65,7 @@ const RequestForm = () => {
         );
       })
       .catch((error: any) => {
+        setProjectList(projectListCons)
         setInstituteList(
           instituteNameOptionsMaker(
             instituteListCons.sort((a, b) =>
@@ -73,12 +78,18 @@ const RequestForm = () => {
         );
         console.log(error);
       });
-    console.log(projectList);
+    // console.log(projectList);
   }, []);
 
 
   useEffect(()=>{
-    if(projectSampleList?.length>0 && instituteName !=="" && projectName !=="" && researcherName!=="")
+    // console.log(projectListHashMap)
+    if(projectListHashMap[`${projectName}`] ===1) {
+        setProjectNameAlreadyExists(true)
+    }
+    else setProjectNameAlreadyExists(false)
+    // 
+    if((projectListHashMap[`${projectName}`] !==1) && projectSampleList?.length>0 && instituteName !=="" && projectName !=="" && researcherName!=="")
     {
         setIsReadyForSubmit(true);
     }
@@ -100,13 +111,16 @@ const RequestForm = () => {
     setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
   }, [newSampleType]);
 
-
-  useEffect(() => {
-    console.log(projectSampleList);
-  }, [projectSampleList]);
+useEffect(()=>{
+    const PLhash:{[key:string]:number} = {}
+    projectList.forEach((project)=>{
+        PLhash[`${project.projectName}`]=1;
+    })
+    setProjectListHashMap(PLhash);
+},[projectList])
 
   const handleAdd = () => {
-    console.log(sampleDetailsHashMap);
+    // console.log(sampleDetailsHashMap);
     setProjectSampleList([
       ...projectSampleList,
       {
@@ -156,14 +170,16 @@ const RequestForm = () => {
     };
     AxiosInstance.post("/ibd/add/project", payLoad)
       .then((res: any) => {
+        handleShow();
         setProjectName("");
         setInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
       })
       .catch((error) => {
-        console.log(error);
-        console.log(payLoad);
+        handleShow();
+        // console.log(error);
+        // console.log(payLoad);
         setProjectName("");
         setInstituteName("");
         setResearcherName("");
@@ -178,9 +194,10 @@ const RequestForm = () => {
     setProjectSampleList([]);
   };
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-
-  return (
+  return (<>
     <Form onSubmit={handleSubmit} className="my-form" onReset={handleReset}>
         {/* <Row>
           Welcome, {userDisplayName}
@@ -201,7 +218,7 @@ const RequestForm = () => {
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {/* <Form.Text className="text-muted colorRed">Project Name already exist !!</Form.Text> */}
+              {projectNameAlreadyExists && <Form.Text className="text-muted colorRed">Project Name already exist !! Please select other Name.</Form.Text>}
             </FormGroup>
           </Col>
         </Row>
@@ -344,6 +361,19 @@ const RequestForm = () => {
           </Col>
         </Row>
       </Form>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Body>
+          <Alert variant="danger">
+            Request Submitted Successfully!.
+          </Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      </>
   )
 }
 

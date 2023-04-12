@@ -1,22 +1,28 @@
-import * as React from 'react'
+import * as React from "react";
 import { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Table } from "react-bootstrap";
+import { Form, Button, Row, Col, Table, Modal, Alert } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import {projectListCons,projectDetailsCons, sampleListConst,projectDetailsCons2 } from "../services/Constants";
+import {
+  projectListCons,
+  projectDetailsCons,
+  sampleListConst,
+  projectDetailsCons2,
+} from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
   compare,
   findSampleTypes,
   sampleListOptionsMaker,
-  projectNameOptionsMaker
+  projectNameOptionsMaker,
 } from "../services/commonFunctions";
 
 const EditForm = () => {
-
-  const [projectList, setProjectList] = useState([<option value="Select Project" className="boldItalicText">
-  Select Project
-</option>]);
+  const [projectList, setProjectList] = useState([
+    <option value="Select Project" className="boldItalicText">
+      Select Project
+    </option>,
+  ]);
   const [projectDetails, setProjectDetails] = useState<any>({});
   const [allSampleList, setAllSampleList] = useState([]);
   const [allSampleType, setAllSampleType] = useState(["Select Type"]);
@@ -30,16 +36,24 @@ const EditForm = () => {
   const [newSampleName, setNewSampleName] = useState("Select Sample");
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
+  const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    console.log('EditForm')
+    // console.log('EditForm')
     // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
     Promise.all([
       AxiosInstance.get("/projectList/fetchData"),
       AxiosInstance.get("/sampleInfoList/fetchData"),
     ])
       .then((res: any) => {
-        setProjectList(projectNameOptionsMaker(res[0]?.data.sort((a:any, b:any) => compare(a.projectName, b.projectName))));
+        setProjectList(
+          projectNameOptionsMaker(
+            res[0]?.data.sort((a: any, b: any) =>
+              compare(a.projectName, b.projectName)
+            )
+          )
+        );
         setAllSampleList(
           res[1]?.data.sort((a: any, b: any) =>
             compare(a.sampleName, b.sampleName)
@@ -47,16 +61,34 @@ const EditForm = () => {
         );
       })
       .catch((error: any) => {
-        setProjectList(projectNameOptionsMaker(projectListCons.sort((a, b) => compare(a.projectName, b.projectName))));
+        setProjectList(
+          projectNameOptionsMaker(
+            projectListCons.sort((a, b) =>
+              compare(a.projectName, b.projectName)
+            )
+          )
+        );
         setAllSampleList(
           sampleListConst.sort((a, b) => compare(a.sampleName, b.sampleName))
         );
         console.log(error);
       });
-    console.log(projectList);
+    // console.log(projectList);
   }, []);
 
-
+  useEffect(() => {
+    console.log(projectDetails);
+    console.log(
+      JSON.stringify({ sampleList: projectDetails?.sampleRequestList })
+    );
+    console.log(JSON.stringify({ sampleList: projectSampleList }));
+    if (
+      JSON.stringify({ sampleList: projectDetails.sampleRequestList }) !==
+      JSON.stringify({ sampleList: projectSampleList })
+    )
+      setIsReadyForSubmit(true);
+    else setIsReadyForSubmit(false);
+  }, [projectSampleList]);
 
   useEffect(() => {
     const temp: any = {};
@@ -72,12 +104,8 @@ const EditForm = () => {
     setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
   }, [newSampleType]);
 
-  useEffect(() => {
-    console.log(projectSampleList);
-  }, [projectSampleList]);
-
   const handleAdd = () => {
-    console.log(sampleDetailsHashMap);
+    // console.log(sampleDetailsHashMap);
     setProjectSampleList([
       ...projectSampleList,
       {
@@ -91,9 +119,9 @@ const EditForm = () => {
     setNewSampleCount("");
   };
 
-  const deleteSample = (sampleName: string) => {
+  const deleteSample = (deleteIndex: number) => {
     const updatedProjectSampleList = projectSampleList.filter(
-      (field) => field.sampleName !== sampleName
+      (field, index) => index !== deleteIndex
     );
     setProjectSampleList(updatedProjectSampleList);
   };
@@ -109,106 +137,79 @@ const EditForm = () => {
 
   // if (regex.test(userInput)) {
 
-//  ------------------
-  // useEffect(() => {
-  //     // console.log({projectName, bloodSampleCount, tissueSampleCount, siteName})
-  //     if (projectName && ((Number(bloodSampleCount) + Number(tissueSampleCount))>0) && siteName) {
-  //         setSubmitDisabled(false);
-  //     }
-  //     else setSubmitDisabled(true);
-  // }, [projectName, bloodSampleCount, tissueSampleCount, siteName])
-
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const payLoad = {
-      projectId:projectDetails?.projectId,
+      projectId: projectDetails?.projectId,
       sampleRequestList: projectSampleList,
     };
-    // AxiosInstance.put(
-    //     `/team/UpdateTeamDetails/${teamDetails?.teamId}?userName=${userEmail}`,
-    //     payload
-    //   )
-    //     .then((res) => {
-    //       console.log("submitted successfully");
-    //       setUpdatedSuccessfully("success");
-    //       AxiosInstance.get(`/team/${teamDetails?.teamId}/fetchData`)
-    //         .then((res) => {
-    //           setTeamDetails(res.data);
-    //           setInitialTeamDetails(res.data);
-    //           setCampNameOptions(campNameOptionsMaker(res?.data?.campName));
-    //         })
-    //         .catch((error) => {
-    //           console.log(error);
-    //           setErrorState(true);
-    //         });
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       setUpdatedSuccessfully("error");
-    //     });
     AxiosInstance.put("/update/project", payLoad)
       .then((res: any) => {
-        alert("updated successfully");
-        AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`).then((res)=>{
-            setProjectDetails(res?.data)
-            setProjectSampleList(res?.data?.sampleRequestList)
-        }).catch((error)=>{
-            if(projectDetails?.projectId == 1){
-                setProjectDetails(projectDetailsCons)
-            setProjectSampleList(projectDetailsCons.sampleRequestList)
-        }
-            else
-            {
-                setProjectDetails(projectDetailsCons2)
-            setProjectSampleList(projectDetailsCons2.sampleRequestList)}
+        handleShow();
+        AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
+          .then((res) => {
+            setProjectDetails(res?.data);
+            setProjectSampleList(res?.data?.sampleRequestList);
+          })
+          .catch((error) => {
+            if (projectDetails?.projectId == 1) {
+              setProjectDetails(projectDetailsCons);
+              setProjectSampleList(projectDetailsCons.sampleRequestList);
+            } else {
+              setProjectDetails(projectDetailsCons2);
+              setProjectSampleList(projectDetailsCons2.sampleRequestList);
             }
-        )
+          });
       })
       .catch((error) => {
-        alert("updated successfully");
+        handleShow();
         console.log(error);
-        if(projectDetails?.projectId == 1){
-            setProjectDetails(projectDetailsCons)
-        setProjectSampleList(projectDetailsCons.sampleRequestList)
-    }
-        else
-        {
-            setProjectDetails(projectDetailsCons2)
-        setProjectSampleList(projectDetailsCons2.sampleRequestList)}
+        if (projectDetails?.projectId == 1) {
+          setProjectDetails(projectDetailsCons);
+          setProjectSampleList(projectDetailsCons.sampleRequestList);
+        } else {
+          setProjectDetails(projectDetailsCons2);
+          setProjectSampleList(projectDetailsCons2.sampleRequestList);
+        }
       });
   };
 
-
- const getProjectDetails = (e:any)=>{
-    AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`).then((res)=>{
-        setProjectDetails(res?.data)
-        setProjectSampleList(res?.data?.sampleRequestList)
-    }).catch((error)=>{
-        if(e.target.value == 1){
-            setProjectDetails(projectDetailsCons)
-        setProjectSampleList(projectDetailsCons.sampleRequestList)
-    }
-        else
-        {
-            setProjectDetails(projectDetailsCons2)
-        setProjectSampleList(projectDetailsCons2.sampleRequestList)}
+  const getProjectDetails = (e: any) => {
+    AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
+      .then((res) => {
+        setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
+        setProjectSampleList([...res?.data?.sampleRequestList]);
+      })
+      .catch((error) => {
+        if (e.target.value == 1) {
+          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
+          setProjectSampleList(
+            JSON.parse(JSON.stringify(projectDetailsCons)).sampleRequestList
+          );
+        } else {
+          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
+          setProjectSampleList(
+            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleRequestList
+          );
         }
-    )
- }
+      });
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
-    <Form onSubmit={handleSubmit} className="my-form">
+    <>
+      <Form onSubmit={handleSubmit} className="my-form">
         {/* <Row>
           Welcome, {userDisplayName}
         </Row> */}
         <hr />
-        <Row className='mb-3'>
-        <Col xs={6}>
+        <Row className="mb-3">
+          <Col xs={6}>
             <Form.Group as={Col}>
               <Form.Label>Project Name:</Form.Label>
-              <Form.Select
-                onChange={getProjectDetails}
-              >
+              <Form.Select onChange={getProjectDetails}>
                 {projectList}
               </Form.Select>
             </Form.Group>
@@ -222,7 +223,11 @@ const EditForm = () => {
               <Form.Control
                 disabled
                 type="text"
-                value={projectDetails?.researcherName?projectDetails?.researcherName:""}
+                value={
+                  projectDetails?.researcherName
+                    ? projectDetails?.researcherName
+                    : ""
+                }
               ></Form.Control>
             </Form.Group>
           </Col>
@@ -232,26 +237,30 @@ const EditForm = () => {
               <Form.Control
                 disabled
                 type="text"
-                value={projectDetails?.instituteName?projectDetails?.instituteName:""}
+                value={
+                  projectDetails?.instituteName
+                    ? projectDetails?.instituteName
+                    : ""
+                }
               ></Form.Control>
             </Form.Group>
           </Col>
         </Row>
         {/* sample select */}
         <Row style={{ marginLeft: "0px" }}>
-            <hr/>
-            <h6>Add Samples:</h6>
+          <hr />
+          <h6>Add Samples:</h6>
           <Row className="mb-3">
             <Row className="mb-3">
               {/* <Col xs={{ span: 10, offset: 1 }}> */}
               <Table striped bordered hover>
                 <thead style={{ backgroundColor: "blue", color: "white" }}>
                   <tr>
-                    <th style={{width:'5%'}}>S.No</th>
-                    <th style={{width:'15%'}}>Sample Type</th>
-                    <th style={{width:'60%'}}>Sample Name</th>
-                    <th style={{width:'10%'}}>No. of Samples</th>
-                    <th style={{width:'10%'}}>Action</th>
+                    <th style={{ width: "5%" }}>S.No</th>
+                    <th style={{ width: "15%" }}>Sample Type</th>
+                    <th style={{ width: "60%" }}>Sample Name</th>
+                    <th style={{ width: "10%" }}>No. of Samples</th>
+                    <th style={{ width: "10%" }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -270,7 +279,7 @@ const EditForm = () => {
                       <td>
                         <Button
                           variant="danger"
-                          onClick={() => deleteSample(item.sampleName)}
+                          onClick={() => deleteSample(index)}
                         >
                           <DeleteIcon />
                         </Button>
@@ -326,7 +335,7 @@ const EditForm = () => {
               {/* </Col> */}
             </Row>
           </Row>
-          <hr/>
+          <hr />
         </Row>
         <Row className="mb-3">
           <Col xs={{ span: 2, offset: 5 }}>
@@ -334,14 +343,25 @@ const EditForm = () => {
               style={{ width: "100%" }}
               variant="success"
               type="submit"
-              disabled={false}
+              disabled={!isReadyForSubmit}
             >
               Submit
             </Button>
           </Col>
         </Row>
       </Form>
-  )
-}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Body>
+          <Alert variant="danger">Request Updated Successfully!.</Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
 
 export default EditForm;

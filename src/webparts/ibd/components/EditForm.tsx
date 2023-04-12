@@ -83,8 +83,9 @@ const EditForm = () => {
     );
     console.log(JSON.stringify({ sampleList: projectSampleList }));
     if (
-      JSON.stringify({ sampleList: projectDetails.sampleRequestList }) !==
-      JSON.stringify({ sampleList: projectSampleList })
+      JSON.stringify({
+        sampleList: projectDetails?.sampleRequestList || [],
+      }) !== JSON.stringify({ sampleList: projectSampleList })
     )
       setIsReadyForSubmit(true);
     else setIsReadyForSubmit(false);
@@ -290,6 +291,7 @@ const EditForm = () => {
                     <td>{projectSampleList?.length + 1}</td>
                     <td>
                       <Form.Select
+                        disabled={!projectSampleList?.length}
                         value={newSampleType}
                         onChange={(e) => setNewSampleType(e.target.value)}
                       >
@@ -300,6 +302,7 @@ const EditForm = () => {
                     </td>
                     <td>
                       <Form.Select
+                        disabled={!projectSampleList?.length}
                         value={newSampleName}
                         onChange={(e) => setNewSampleName(e.target.value)}
                       >
@@ -309,6 +312,8 @@ const EditForm = () => {
                     <td>
                       <Form.Control
                         type="number"
+                        disabled={!projectSampleList?.length}
+                        required
                         min={1}
                         step={1}
                         value={newSampleCount}

@@ -408,15 +408,15 @@ export const projectListCons = [
 export const projectDetailsCons = {
     projectId:1,
     projectName:'P001',
-    instituteName:'XYZ',
+    instituteId:1,
     researcherName:'Bharat',
-    "sampleRequestList":[{"sampleId":5,"sampleType":"Blood","sampleName":"Plasma-3.0 mL No Additive (Z) Tubes","sampleCount":"3"},{"sampleId":41,"sampleType":"Stool","sampleName":"No preservative-Faeces Tube 76x20mm","sampleCount":"1"}]
+    "sampleResponseList":[{"sampleId":5,"sampleCount":"3"},{"sampleId":41,"sampleCount":"1"}]
 }
 
 export const projectDetailsCons2 = {
     projectId:2,
     projectName:'P002',
-    instituteName:'ABC',
-    researcherName:'Bhyatia',
-    "sampleRequestList":[{"sampleId":41,"sampleType":"Stool","sampleName":"No preservative-Faeces Tube 76x20mm","sampleCount":"1"},{"sampleId":5,"sampleType":"Blood","sampleName":"Plasma-3.0 mL No Additive (Z) Tubes","sampleCount":"3"}]
+    instituteId:9,
+    researcherName:'Bhatia',
+    "sampleResponseList":[{"sampleId":41,"sampleCount":"1"},{"sampleId":5,"sampleCount":"3"}]
 }

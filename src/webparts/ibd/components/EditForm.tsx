@@ -7,6 +7,7 @@ import {
   projectDetailsCons,
   sampleListConst,
   projectDetailsCons2,
+  instituteListCons,
 } from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
@@ -33,18 +34,21 @@ const EditForm = () => {
       Select Sample
     </option>,
   ]);
+  const [instituteList , setInstituteList] = useState<any>({});
   const [newSampleName, setNewSampleName] = useState("Select Sample");
   const [newSampleCount, setNewSampleCount] = useState(null);
-  const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
+  const [sampleNameToIdHashMap, setSampleNameToIdHashMap] = useState<any>({});
+  const [sampleIdToDetailsHashmap, setSampleIdToDetailsHashmap] = useState<any>({})
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
   const [show, setShow] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     // console.log('EditForm')
     // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
     Promise.all([
       AxiosInstance.get("/projectList/fetchData"),
       AxiosInstance.get("/sampleInfoList/fetchData"),
+      AxiosInstance.get("/instituteList/fetchData")
     ])
       .then((res: any) => {
         setProjectList(
@@ -59,6 +63,11 @@ const EditForm = () => {
             compare(a.sampleName, b.sampleName)
           )
         );
+        const instituteHashMap:any = {};
+        res[2]?.data?.forEach((institute:any)=>{
+          instituteHashMap[`${institute.instituteId}`] = institute.instituteName
+        })
+        setInstituteList(instituteHashMap)
       })
       .catch((error: any) => {
         setProjectList(
@@ -71,20 +80,25 @@ const EditForm = () => {
         setAllSampleList(
           sampleListConst.sort((a, b) => compare(a.sampleName, b.sampleName))
         );
+        const instituteHashMap:any = {};
+        instituteListCons.forEach((institute:any)=>{
+          instituteHashMap[`${institute.instituteId}`] = institute.instituteName
+        })
+        setInstituteList(instituteHashMap)
         console.log(error);
       });
     // console.log(projectList);
-  }, []);
+  }, []); 
 
   useEffect(() => {
     console.log(projectDetails);
     console.log(
-      JSON.stringify({ sampleList: projectDetails?.sampleRequestList })
+      JSON.stringify({ sampleList: (projectDetails?.sampleResponseList || []) })
     );
     console.log(JSON.stringify({ sampleList: projectSampleList }));
     if (
       JSON.stringify({
-        sampleList: projectDetails?.sampleRequestList || [],
+        sampleList: (projectDetails?.sampleResponseList || []),
       }) !== JSON.stringify({ sampleList: projectSampleList })
     )
       setIsReadyForSubmit(true);
@@ -92,12 +106,15 @@ const EditForm = () => {
   }, [projectSampleList]);
 
   useEffect(() => {
-    const temp: any = {};
+    const sampleNameToId: any = {};
+    const sampleIdToDetails:any = {};
     allSampleList.forEach((sample) => {
-      temp[`${sample.sampleName}`] = sample.sampleId;
+      sampleNameToId[`${sample.sampleName}`] = sample.sampleId;
+      sampleIdToDetails[`${sample.sampleId}`] = {sampleType:sample.sampleType, sampleName:sample.sampleName}
     });
-    setSampleDetailsHashMap(temp);
-    // console.log(sampleDetailsHashMap)
+    setSampleNameToIdHashMap(sampleNameToId);
+    setSampleIdToDetailsHashmap(sampleIdToDetails);
+    // console.log(sampleNameToIdHashMap)
     setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
   }, [allSampleList]);
 
@@ -106,11 +123,11 @@ const EditForm = () => {
   }, [newSampleType]);
 
   const handleAdd = () => {
-    // console.log(sampleDetailsHashMap);
+    // console.log(sampleNameToIdHashMap);
     setProjectSampleList([
       ...projectSampleList,
       {
-        sampleId: sampleDetailsHashMap[`${newSampleName}`],
+        sampleId: sampleNameToIdHashMap[`${newSampleName}`],
         sampleType: newSampleType,
         sampleName: newSampleName,
         sampleCount: newSampleCount,
@@ -149,16 +166,16 @@ const EditForm = () => {
         handleShow();
         AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
           .then((res) => {
-            setProjectDetails(res?.data);
-            setProjectSampleList(res?.data?.sampleRequestList);
+            setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
+        setProjectSampleList([...res?.data?.sampleResponseList]);
           })
           .catch((error) => {
             if (projectDetails?.projectId == 1) {
               setProjectDetails(projectDetailsCons);
-              setProjectSampleList(projectDetailsCons.sampleRequestList);
+              setProjectSampleList(projectDetailsCons.sampleResponseList);
             } else {
               setProjectDetails(projectDetailsCons2);
-              setProjectSampleList(projectDetailsCons2.sampleRequestList);
+              setProjectSampleList(projectDetailsCons2.sampleResponseList);
             }
           });
       })
@@ -166,11 +183,15 @@ const EditForm = () => {
         handleShow();
         console.log(error);
         if (projectDetails?.projectId == 1) {
-          setProjectDetails(projectDetailsCons);
-          setProjectSampleList(projectDetailsCons.sampleRequestList);
+          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
+          setProjectSampleList(
+            JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
+          );
         } else {
-          setProjectDetails(projectDetailsCons2);
-          setProjectSampleList(projectDetailsCons2.sampleRequestList);
+          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
+          setProjectSampleList(
+            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
+          );
         }
       });
   };
@@ -179,18 +200,18 @@ const EditForm = () => {
     AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-        setProjectSampleList([...res?.data?.sampleRequestList]);
+        setProjectSampleList([...res?.data?.sampleResponseList]);
       })
       .catch((error) => {
         if (e.target.value == 1) {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
           setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons)).sampleRequestList
+            JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
           );
         } else {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
           setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleRequestList
+            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
           );
         }
       });
@@ -239,8 +260,8 @@ const EditForm = () => {
                 disabled
                 type="text"
                 value={
-                  projectDetails?.instituteName
-                    ? projectDetails?.instituteName
+                    projectDetails?.instituteId
+                    ? instituteList[`${projectDetails?.instituteId}`]
                     : ""
                 }
               ></Form.Control>
@@ -268,8 +289,8 @@ const EditForm = () => {
                   {projectSampleList?.map((item, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{item.sampleType}</td>
-                      <td>{item.sampleName}</td>
+                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
+                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
                       <td>
                         <input
                           type="text"
@@ -313,7 +334,6 @@ const EditForm = () => {
                       <Form.Control
                         type="number"
                         disabled={!projectSampleList?.length}
-                        required
                         min={1}
                         step={1}
                         value={newSampleCount}

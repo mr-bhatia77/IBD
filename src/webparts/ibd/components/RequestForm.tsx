@@ -168,7 +168,7 @@ useEffect(()=>{
       instituteId: instituteName,
       sampleRequestList: projectSampleList,
     };
-    AxiosInstance.post("/ibd/add/project", payLoad)
+    AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
         handleShow();
         setProjectName("");

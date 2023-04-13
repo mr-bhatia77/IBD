@@ -5,8 +5,7 @@ import { Container } from 'react-bootstrap';
 import ProjectRequestForm from "./ProjectRequestForm";
 import AdminDashBoard from "./AdminDashBoard";
 import { Tabs, Tab } from 'react-bootstrap';
-// import SearchBox  from "./SearchBox";
-// import DynamicTable from "./DynamicTable";
+// import { SearchBox } from "./SearchBox";
 
 interface IApp {
   userDisplayName: string;
@@ -14,7 +13,7 @@ interface IApp {
 
 const App: React.FC<IApp> = ({ userDisplayName }) => {
 
-  const [key, setKey] = useState('tab4');
+  const [key, setKey] = useState('tab1');
 
   return (
     <Container>
@@ -25,10 +24,10 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
          <Tab eventKey="tab2" title="IBD BioSample Mapping">
           <AdminDashBoard></AdminDashBoard>
         </Tab>
-        {/* <Tab eventKey="tab3" title="SearchBox">
+         {/* <Tab eventKey="tab3" title="SearchBox">
           <SearchBox></SearchBox>
-        </Tab>
-        <Tab eventKey="tab4" title="DynamicTable">
+        </Tab> */}
+        {/*<Tab eventKey="tab4" title="DynamicTable">
           <DynamicTable></DynamicTable>
         </Tab> */}
         {/* <Tab eventKey="tab4" title="DynamicTable">

@@ -52,6 +52,12 @@ const RequestForm = () => {
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
   const [show, setShow] = useState(false);
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    const searchResults = onSearch(projectName);
+    setResults(searchResults);
+  }, [projectName]);
 
   useEffect(() => {
     // console.log('Request Form')
@@ -165,13 +171,21 @@ const RequestForm = () => {
 
   // if (regex.test(userInput)) {
 
-  // useEffect(() => {
-  //     // console.log({projectName, bloodSampleCount, tissueSampleCount, siteName})
-  //     if (projectName && ((Number(bloodSampleCount) + Number(tissueSampleCount))>0) && siteName) {
-  //         setSubmitDisabled(false);
-  //     }
-  //     else setSubmitDisabled(true);
-  // }, [projectName, bloodSampleCount, tissueSampleCount, siteName])
+  const onSearch = (projectName: string) => {
+    const results = [...Object.keys(projectListHashMap)];
+
+    const filteredResults = [];
+
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+
+      if (result?.toLowerCase().indexOf(projectName?.toLowerCase()) !== -1) {
+        filteredResults.push(result);
+      }
+    }
+
+    return filteredResults;
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -188,7 +202,7 @@ const RequestForm = () => {
         setInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
-        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
+        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
         setNewSampleCount(null);
         setSampleNameList([
           <option value="Select Sample" className="boldItalicText">
@@ -207,8 +221,8 @@ const RequestForm = () => {
         setInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
-        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
-        setNewSampleCount(null)
+        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
+        setNewSampleCount(null);
         setSampleNameList([
           <option value="Select Sample" className="boldItalicText">
             Select Sample
@@ -219,11 +233,11 @@ const RequestForm = () => {
 
   const handleReset = (e: any) => {
     setProjectName(null);
-    setNewSampleCount(null)
+    setNewSampleCount(null);
     setInstituteName(null);
     setResearcherName("");
     setProjectSampleList([]);
-    setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
+    setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
     setSampleNameList([
       <option value="Select Sample" className="boldItalicText">
         Select Sample
@@ -256,12 +270,29 @@ const RequestForm = () => {
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {projectNameAlreadyExists && (
-                <Form.Text className="text-muted colorRed">
-                  Project Name already exist !! Please select other Name.
-                </Form.Text>
+              {projectNameAlreadyExists && projectName != "" && (
+                <Row className="dropDown">
+                  <p className="boldItalicText">Already in use: </p>
+                  <ul className="noDots">
+                    {results.map((result, index) => (
+                      <li key={index}>{result}</li>
+                    ))}
+                  </ul>
+                </Row>
               )}
             </FormGroup>
+          </Col>
+          <Col xs={6} className='alignMessageCenter'>
+          {projectNameAlreadyExists && (
+                <span className="colorRed">
+                  * Project Name already exist !! Please select other Name.
+                </span>
+              )}
+              {!projectNameAlreadyExists && projectName != "" && (
+                <span className="colorGreen">
+                  Project Name is available!
+                </span>
+              )}
           </Col>
         </Row>
 

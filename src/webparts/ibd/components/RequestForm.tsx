@@ -414,7 +414,7 @@ const RequestForm = () => {
       </Form>
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="success">Request Submitted Successfully!.</Alert>
+          <Alert variant="primary">Request Submitted Successfully!.</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

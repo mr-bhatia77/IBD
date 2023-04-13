@@ -3,8 +3,6 @@ import * as React from "react";
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import ProjectRequestForm from "./ProjectRequestForm";
-import ProjectRequestForm2 from "./ProjectRequestForm2";
-// import ProjectRequestForm2 from "./ProjectRequestForm2";
 import AdminDashBoard from "./AdminDashBoard";
 import { Tabs, Tab } from 'react-bootstrap';
 // import SearchBox  from "./SearchBox";
@@ -33,9 +31,9 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
         <Tab eventKey="tab4" title="DynamicTable">
           <DynamicTable></DynamicTable>
         </Tab> */}
-        <Tab eventKey="tab4" title="DynamicTable">
+        {/* <Tab eventKey="tab4" title="DynamicTable">
           <ProjectRequestForm2 userDisplayName={userDisplayName}></ProjectRequestForm2>
-        </Tab>
+        </Tab> */}
       </Tabs>
     </Container>
   )

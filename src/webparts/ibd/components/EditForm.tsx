@@ -91,15 +91,13 @@ const EditForm = () => {
   }, []); 
 
   useEffect(() => {
-    console.log(projectDetails);
-    console.log(
-      JSON.stringify({ sampleList: (projectDetails?.sampleResponseList || []) })
-    );
-    console.log(JSON.stringify({ sampleList: projectSampleList }));
+    // console.log(projectDetails);
+    // console.log(
+    //   JSON.stringify({ sampleList: (projectDetails?.sampleResponseList || []) })
+    // );
+    // console.log(JSON.stringify({ sampleList: projectSampleList }));
     if (
-      JSON.stringify({
-        sampleList: (projectDetails?.sampleResponseList || []),
-      }) !== JSON.stringify({ sampleList: projectSampleList })
+      projectSampleList.length > 0
     )
       setIsReadyForSubmit(true);
     else setIsReadyForSubmit(false);
@@ -128,8 +126,6 @@ const EditForm = () => {
       ...projectSampleList,
       {
         sampleId: sampleNameToIdHashMap[`${newSampleName}`],
-        sampleType: newSampleType,
-        sampleName: newSampleName,
         sampleCount: newSampleCount,
       },
     ]);
@@ -167,15 +163,15 @@ const EditForm = () => {
         AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
           .then((res) => {
             setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-        setProjectSampleList([...res?.data?.sampleResponseList]);
+        // setProjectSampleList([...res?.data?.sampleResponseList]);
           })
           .catch((error) => {
             if (projectDetails?.projectId == 1) {
               setProjectDetails(projectDetailsCons);
-              setProjectSampleList(projectDetailsCons.sampleResponseList);
+              // setProjectSampleList(projectDetailsCons.sampleResponseList);
             } else {
               setProjectDetails(projectDetailsCons2);
-              setProjectSampleList(projectDetailsCons2.sampleResponseList);
+              // setProjectSampleList(projectDetailsCons2.sampleResponseList);
             }
           });
       })
@@ -184,14 +180,14 @@ const EditForm = () => {
         console.log(error);
         if (projectDetails?.projectId == 1) {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
-          setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
-          );
+          // setProjectSampleList(
+          //   JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
+          // );
         } else {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
-          setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
-          );
+          // setProjectSampleList(
+          //   JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
+          // );
         }
       });
   };
@@ -200,19 +196,19 @@ const EditForm = () => {
     AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-        setProjectSampleList([...res?.data?.sampleResponseList]);
+        // setProjectSampleList([...res?.data?.sampleResponseList]);
       })
       .catch((error) => {
         if (e.target.value == 1) {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
-          setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
-          );
+          // setProjectSampleList(
+          //   JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
+          // );
         } else {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
-          setProjectSampleList(
-            JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
-          );
+          // setProjectSampleList(
+          //   JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
+          // );
         }
       });
   };
@@ -286,9 +282,21 @@ const EditForm = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {projectSampleList?.map((item, index) => (
+                {projectDetails?.sampleResponseList?.map((item:any,index:number) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
+                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
+                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
+                      <td>
+                        {item.sampleCount}
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                  ))}
+                  {projectSampleList?.map((item, index) => (
+                    <tr key={projectDetails?.sampleResponseList?.length + index}>
+                      <td>{projectDetails?.sampleResponseList?.length + index + 1}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
                       <td>
@@ -308,11 +316,11 @@ const EditForm = () => {
                       </td>
                     </tr>
                   ))}
-                  <tr key={projectSampleList?.length + 1}>
-                    <td>{projectSampleList?.length + 1}</td>
+                  <tr key={projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}>
+                    <td>{projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}</td>
                     <td>
                       <Form.Select
-                        disabled={!projectSampleList?.length}
+                        disabled={!projectDetails?.sampleResponseList?.length}
                         value={newSampleType}
                         onChange={(e) => setNewSampleType(e.target.value)}
                       >
@@ -323,7 +331,7 @@ const EditForm = () => {
                     </td>
                     <td>
                       <Form.Select
-                        disabled={!projectSampleList?.length}
+                        disabled={!projectDetails?.sampleResponseList?.length}
                         value={newSampleName}
                         onChange={(e) => setNewSampleName(e.target.value)}
                       >
@@ -333,7 +341,7 @@ const EditForm = () => {
                     <td>
                       <Form.Control
                         type="number"
-                        disabled={!projectSampleList?.length}
+                        disabled={!projectDetails?.sampleResponseList?.length}
                         min={1}
                         step={1}
                         value={newSampleCount}
@@ -377,7 +385,7 @@ const EditForm = () => {
       </Form>
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="danger">Request Updated Successfully!.</Alert>
+          <Alert variant="primary">Request Updated Successfully!.</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

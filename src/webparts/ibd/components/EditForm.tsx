@@ -317,7 +317,7 @@ const EditForm = () => {
                         onChange={(e) => setNewSampleType(e.target.value)}
                       >
                         {allSampleType.map((sampleType) => (
-                          <option key={sampleType}>{sampleType}</option>
+                          <option key={sampleType} className={sampleType==='Select Type'?'boldItalicText':''}>{sampleType}</option>
                         ))}
                       </Form.Select>
                     </td>

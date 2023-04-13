@@ -1,8 +1,21 @@
-import * as React from 'react'
+import * as React from "react";
 import { useState, useEffect } from "react";
-import { Form, FormGroup, Button, Row, Col, Table,Modal, Alert } from "react-bootstrap";
+import {
+  Form,
+  FormGroup,
+  Button,
+  Row,
+  Col,
+  Table,
+  Modal,
+  Alert,
+} from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import { instituteListCons, sampleListConst,projectListCons } from "../services/Constants";
+import {
+  instituteListCons,
+  sampleListConst,
+  projectListCons,
+} from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
@@ -13,11 +26,11 @@ import {
 } from "../services/commonFunctions";
 
 const RequestForm = () => {
-
   const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [researcherName, setResearcherName] = useState("");
-  const [projectNameAlreadyExists,setProjectNameAlreadyExists] = useState(false);
+  const [projectNameAlreadyExists, setProjectNameAlreadyExists] =
+    useState(false);
   const [projectListHashMap, setProjectListHashMap] = useState<any>({});
   const [instituteName, setInstituteName] = useState("");
   const [instituteList, setInstituteList] = useState([
@@ -37,9 +50,8 @@ const RequestForm = () => {
   const [newSampleName, setNewSampleName] = useState("Select Sample");
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
-  const [isReadyForSubmit,setIsReadyForSubmit] = useState(false);
+  const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
   const [show, setShow] = useState(false);
-
 
   useEffect(() => {
     // console.log('Request Form')
@@ -65,7 +77,7 @@ const RequestForm = () => {
         );
       })
       .catch((error: any) => {
-        setProjectList(projectListCons)
+        setProjectList(projectListCons);
         setInstituteList(
           instituteNameOptionsMaker(
             instituteListCons.sort((a, b) =>
@@ -81,21 +93,22 @@ const RequestForm = () => {
     // console.log(projectList);
   }, []);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     // console.log(projectListHashMap)
-    if(projectListHashMap[`${projectName}`] ===1) {
-        setProjectNameAlreadyExists(true)
-    }
-    else setProjectNameAlreadyExists(false)
-    // 
-    if((projectListHashMap[`${projectName}`] !==1) && projectSampleList?.length>0 && instituteName !=="" && projectName !=="" && researcherName!=="")
-    {
-        setIsReadyForSubmit(true);
-    }
-    else 
-    setIsReadyForSubmit(false)
-  },[projectSampleList,instituteName,projectName,researcherName])
+    if (projectListHashMap[`${projectName}`] === 1) {
+      setProjectNameAlreadyExists(true);
+    } else setProjectNameAlreadyExists(false);
+    //
+    if (
+      projectListHashMap[`${projectName}`] !== 1 &&
+      projectSampleList?.length > 0 &&
+      instituteName !== "" &&
+      projectName !== "" &&
+      researcherName !== ""
+    ) {
+      setIsReadyForSubmit(true);
+    } else setIsReadyForSubmit(false);
+  }, [projectSampleList, instituteName, projectName, researcherName]);
 
   useEffect(() => {
     const temp: any = {};
@@ -111,13 +124,13 @@ const RequestForm = () => {
     setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
   }, [newSampleType]);
 
-useEffect(()=>{
-    const PLhash:{[key:string]:number} = {}
-    projectList.forEach((project)=>{
-        PLhash[`${project.projectName}`]=1;
-    })
+  useEffect(() => {
+    const PLhash: { [key: string]: number } = {};
+    projectList.forEach((project) => {
+      PLhash[`${project.projectName}`] = 1;
+    });
     setProjectListHashMap(PLhash);
-},[projectList])
+  }, [projectList]);
 
   const handleAdd = () => {
     // console.log(sampleDetailsHashMap);
@@ -175,6 +188,16 @@ useEffect(()=>{
         setInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
+        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
+        setNewSampleCount(null);
+        setSampleNameList([
+          <option value="Select Sample" className="boldItalicText">
+            Select Sample
+          </option>,
+        ]);
+        AxiosInstance.get("/projectList/fetchData").then((res) => {
+          setProjectList(res?.data);
+        });
       })
       .catch((error) => {
         handleShow();
@@ -184,21 +207,36 @@ useEffect(()=>{
         setInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
+        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
+        setNewSampleCount(null)
+        setSampleNameList([
+          <option value="Select Sample" className="boldItalicText">
+            Select Sample
+          </option>,
+        ]);
       });
   };
 
   const handleReset = (e: any) => {
     setProjectName(null);
+    setNewSampleCount(null)
     setInstituteName(null);
     setResearcherName("");
     setProjectSampleList([]);
+    setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)])
+    setSampleNameList([
+      <option value="Select Sample" className="boldItalicText">
+        Select Sample
+      </option>,
+    ]);
   };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  return (<>
-    <Form onSubmit={handleSubmit} className="my-form" onReset={handleReset}>
+  return (
+    <>
+      <Form onSubmit={handleSubmit} className="my-form" onReset={handleReset}>
         {/* <Row>
           Welcome, {userDisplayName}
         </Row> */}
@@ -218,7 +256,11 @@ useEffect(()=>{
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {projectNameAlreadyExists && <Form.Text className="text-muted colorRed">Project Name already exist !! Please select other Name.</Form.Text>}
+              {projectNameAlreadyExists && (
+                <Form.Text className="text-muted colorRed">
+                  Project Name already exist !! Please select other Name.
+                </Form.Text>
+              )}
             </FormGroup>
           </Col>
         </Row>
@@ -254,19 +296,19 @@ useEffect(()=>{
         </Row>
         {/* sample select */}
         <Row style={{ marginLeft: "0px" }}>
-            <hr/>
-            <h6>Add Samples:</h6>
+          <hr />
+          <h6>Add Samples:</h6>
           <Row className="mb-3">
             <Row className="mb-3">
               {/* <Col xs={{ span: 10, offset: 1 }}> */}
               <Table striped bordered hover>
                 <thead style={{ backgroundColor: "blue", color: "white" }}>
                   <tr>
-                    <th style={{width:'5%'}}>S.No</th>
-                    <th style={{width:'15%'}}>Sample Type</th>
-                    <th style={{width:'60%'}}>Sample Name</th>
-                    <th style={{width:'10%'}}>No. of Samples</th>
-                    <th style={{width:'10%'}}>Action</th>
+                    <th style={{ width: "5%" }}>S.No</th>
+                    <th style={{ width: "15%" }}>Sample Type</th>
+                    <th style={{ width: "60%" }}>Sample Name</th>
+                    <th style={{ width: "10%" }}>No. of Samples</th>
+                    <th style={{ width: "10%" }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -300,7 +342,16 @@ useEffect(()=>{
                         onChange={(e) => setNewSampleType(e.target.value)}
                       >
                         {allSampleType.map((sampleType) => (
-                          <option key={sampleType}>{sampleType}</option>
+                          <option
+                            key={sampleType}
+                            className={
+                              sampleType === "Select Type"
+                                ? "boldItalicText"
+                                : ""
+                            }
+                          >
+                            {sampleType}
+                          </option>
                         ))}
                       </Form.Select>
                     </td>
@@ -342,7 +393,7 @@ useEffect(()=>{
             </Row>
           </Row>
         </Row>
-        <hr/>
+        <hr />
         <Row className="mb-3">
           <Col xs={{ span: 2, offset: 4 }}>
             <Button
@@ -363,9 +414,7 @@ useEffect(()=>{
       </Form>
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="danger">
-            Request Submitted Successfully!.
-          </Alert>
+          <Alert variant="success">Request Submitted Successfully!.</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -373,8 +422,8 @@ useEffect(()=>{
           </Button>
         </Modal.Footer>
       </Modal>
-      </>
-  )
-}
+    </>
+  );
+};
 
-export default RequestForm
+export default RequestForm;

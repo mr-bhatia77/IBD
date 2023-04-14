@@ -55,8 +55,8 @@ const RequestForm = () => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    console.log(projectName)
-    console.log(!!projectName)
+    // console.log(projectName)
+    // console.log(!!projectName)
     const searchResults = onSearch(projectName);
     setResults(searchResults);
   }, [projectName]);
@@ -103,7 +103,7 @@ const RequestForm = () => {
 
   useEffect(() => {
     // console.log(projectListHashMap)
-    if (projectListHashMap[`${projectName}`] === 1) {
+    if (projectListHashMap[`${projectName.toLowerCase()}`] === 1) {
       setProjectNameAlreadyExists(true);
     } else setProjectNameAlreadyExists(false);
     //
@@ -129,13 +129,13 @@ const RequestForm = () => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
+    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType));
   }, [newSampleType]);
 
   useEffect(() => {
     const PLhash: { [key: string]: number } = {};
     projectList.forEach((project) => {
-      PLhash[`${project.projectName}`] = 1;
+      PLhash[`${project?.projectName?.toLowerCase()}`] = 1;
     });
     setProjectListHashMap(PLhash);
   }, [projectList]);

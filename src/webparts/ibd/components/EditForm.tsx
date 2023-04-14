@@ -297,8 +297,8 @@ const EditForm = () => {
                     </tr>
                   ))}
                   {projectSampleList?.map((item, index) => (
-                    <tr key={projectDetails?.sampleResponseList?.length + index}>
-                      <td>{projectDetails?.sampleResponseList?.length + index + 1}</td>
+                    <tr key={projectDetails?.sampleResponseList?.length||0 + index}>
+                      <td>{projectDetails?.sampleResponseList?.length||0 + index + 1}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
                       <td>
@@ -318,8 +318,8 @@ const EditForm = () => {
                       </td>
                     </tr>
                   ))}
-                  <tr key={projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}>
-                    <td>{projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}</td>
+                  <tr key={projectDetails?.sampleResponseList?.length||0 + projectSampleList?.length||0 + 1}>
+                    <td>{projectDetails?.sampleResponseList?.length||0 + projectSampleList?.length||0 + 1}</td>
                     <td>
                       <Form.Select
                         disabled={!projectDetails?.sampleResponseList?.length}

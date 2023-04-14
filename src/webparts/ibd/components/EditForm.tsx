@@ -170,6 +170,10 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
   };
 
   const getProjectDetails = (e: any) => {
+    if(e.target.value === 'Select Project') {
+      setProjectDetails({});
+      setProjectSampleList([]);
+    }
     AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
@@ -284,12 +288,12 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
                   {projectSampleList?.map((item, index) => (
                     <tr
                       key={
-                        (projectDetails?.sampleResponseList?.length || 0) +
+                        (projectDetails?.sampleResponseList || []).length  +
                         index
                       }
                     >
                       <td>
-                        {(projectDetails?.sampleResponseList?.length || 0) +
+                        {(projectDetails?.sampleResponseList || []).length +
                           index +
                           1}
                       </td>
@@ -324,15 +328,11 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
                   ))}
                   <tr
                     key={
-                      projectDetails?.sampleResponseList?.length ||
-                      0 + projectSampleList?.length ||
-                      0 + 1
+                      (projectDetails?.sampleResponseList || []).length + projectSampleList?.length + 1
                     }
                   >
                     <td>
-                      {projectDetails?.sampleResponseList?.length ||
-                        0 + projectSampleList?.length ||
-                        0 + 1}
+                      {(projectDetails?.sampleResponseList || []).length + projectSampleList?.length + 1}
                     </td>
                     <td>
                       <Form.Select

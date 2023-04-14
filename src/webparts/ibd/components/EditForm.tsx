@@ -45,7 +45,7 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    console.log(props);
+    // console.log(props);
     setProjectList(
       projectNameOptionsMaker(
         props?.projectList?.sort((a: any, b: any) =>
@@ -174,7 +174,8 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
       setProjectDetails({});
       setProjectSampleList([]);
     }
-    AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
+    else {
+      AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
         // setProjectSampleList([...res?.data?.sampleResponseList]);
@@ -192,12 +193,11 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
           // );
         }
       });
+    }
   };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  console.log(projectDetails?.sampleResponseList?.length);
   return (
     <>
       <Form onSubmit={handleSubmit} className="my-form">

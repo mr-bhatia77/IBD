@@ -60,7 +60,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   }, [projectName]);
 
   useEffect(() => {
-    console.log(props)
+    // console.log(props)
     setProjectList(props.projectList);
     setInstituteList(
       instituteNameOptionsMaker(

@@ -40,7 +40,7 @@ export const instituteNameOptionsMaker = (instituteList: any[]) => {
 
   export const findSampleTypes = (sampleList: any[]) => {
     const sampleTypeHashMap:{[key:string]:any} = {};
-    sampleList.forEach((sample:any)=>{
+    sampleList?.forEach((sample:any)=>{
       sampleTypeHashMap[`${sample.sampleType}`]=1
   })
   return Object.keys(sampleTypeHashMap);

@@ -2,13 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Table, Modal, Alert } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import {
-  projectListCons,
-  projectDetailsCons,
-  sampleListConst,
-  projectDetailsCons2,
-  instituteListCons,
-} from "../services/Constants";
+import { projectDetailsCons, projectDetailsCons2 } from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
@@ -18,7 +12,13 @@ import {
   projectNameOptionsMaker,
 } from "../services/commonFunctions";
 
-const EditForm = () => {
+interface IEditForm {
+  projectList: any;
+  instituteList: any;
+  allSampleList: any;
+}
+
+const EditForm: React.FunctionComponent<IEditForm> = (props) => {
   const [projectList, setProjectList] = useState([
     <option value="Select Project" className="boldItalicText">
       Select Project
@@ -34,61 +34,36 @@ const EditForm = () => {
       Select Sample
     </option>,
   ]);
-  const [instituteList , setInstituteList] = useState<any>({});
+  const [instituteList, setInstituteList] = useState<any>({});
   const [newSampleName, setNewSampleName] = useState("Select Sample");
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleNameToIdHashMap, setSampleNameToIdHashMap] = useState<any>({});
-  const [sampleIdToDetailsHashmap, setSampleIdToDetailsHashmap] = useState<any>({})
+  const [sampleIdToDetailsHashmap, setSampleIdToDetailsHashmap] = useState<any>(
+    {}
+  );
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
   const [show, setShow] = useState(false);
 
- useEffect(() => {
-    // console.log('EditForm')
-    // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
-    Promise.all([
-      AxiosInstance.get("/projectList/fetchData"),
-      AxiosInstance.get("/sampleInfoList/fetchData"),
-      AxiosInstance.get("/instituteList/fetchData")
-    ])
-      .then((res: any) => {
-        setProjectList(
-          projectNameOptionsMaker(
-            res[0]?.data.sort((a: any, b: any) =>
-              compare(a.projectName, b.projectName)
-            )
-          )
-        );
-        setAllSampleList(
-          res[1]?.data.sort((a: any, b: any) =>
-            compare(a.sampleName, b.sampleName)
-          )
-        );
-        const instituteHashMap:any = {};
-        res[2]?.data?.forEach((institute:any)=>{
-          instituteHashMap[`${institute.instituteId}`] = institute.instituteName
-        })
-        setInstituteList(instituteHashMap)
-      })
-      .catch((error: any) => {
-        setProjectList(
-          projectNameOptionsMaker(
-            projectListCons.sort((a, b) =>
-              compare(a.projectName, b.projectName)
-            )
-          )
-        );
-        setAllSampleList(
-          sampleListConst.sort((a, b) => compare(a.sampleName, b.sampleName))
-        );
-        const instituteHashMap:any = {};
-        instituteListCons.forEach((institute:any)=>{
-          instituteHashMap[`${institute.instituteId}`] = institute.instituteName
-        })
-        setInstituteList(instituteHashMap)
-        console.log(error);
-      });
-    // console.log(projectList);
-  }, []); 
+  useEffect(() => {
+    console.log(props);
+    setProjectList(
+      projectNameOptionsMaker(
+        props?.projectList?.sort((a: any, b: any) =>
+          compare(a.projectName, b.projectName)
+        )
+      )
+    );
+    setAllSampleList(
+      props?.allSampleList?.sort((a: any, b: any) =>
+        compare(a.sampleName, b.sampleName)
+      )
+    );
+    const instituteHashMap: any = {};
+    props?.instituteList?.forEach((institute: any) => {
+      instituteHashMap[`${institute.instituteId}`] = institute.instituteName;
+    });
+    setInstituteList(instituteHashMap);
+  }, [props]);
 
   useEffect(() => {
     // console.log(projectDetails);
@@ -96,19 +71,19 @@ const EditForm = () => {
     //   JSON.stringify({ sampleList: (projectDetails?.sampleResponseList || []) })
     // );
     // console.log(JSON.stringify({ sampleList: projectSampleList }));
-    if (
-      projectSampleList.length > 0
-    )
-      setIsReadyForSubmit(true);
+    if (projectSampleList.length > 0) setIsReadyForSubmit(true);
     else setIsReadyForSubmit(false);
   }, [projectSampleList]);
 
   useEffect(() => {
     const sampleNameToId: any = {};
-    const sampleIdToDetails:any = {};
-    allSampleList.forEach((sample) => {
+    const sampleIdToDetails: any = {};
+    allSampleList?.forEach((sample) => {
       sampleNameToId[`${sample.sampleName}`] = sample.sampleId;
-      sampleIdToDetails[`${sample.sampleId}`] = {sampleType:sample.sampleType, sampleName:sample.sampleName}
+      sampleIdToDetails[`${sample.sampleId}`] = {
+        sampleType: sample.sampleType,
+        sampleName: sample.sampleName,
+      };
     });
     setSampleNameToIdHashMap(sampleNameToId);
     setSampleIdToDetailsHashmap(sampleIdToDetails);
@@ -117,7 +92,7 @@ const EditForm = () => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
+    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType));
   }, [newSampleType]);
 
   const handleAdd = () => {
@@ -164,7 +139,7 @@ const EditForm = () => {
         AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
           .then((res) => {
             setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-        // setProjectSampleList([...res?.data?.sampleResponseList]);
+            // setProjectSampleList([...res?.data?.sampleResponseList]);
           })
           .catch((error) => {
             if (projectDetails?.projectId == 1) {
@@ -218,6 +193,7 @@ const EditForm = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  console.log(projectDetails?.sampleResponseList?.length);
   return (
     <>
       <Form onSubmit={handleSubmit} className="my-form">
@@ -258,7 +234,7 @@ const EditForm = () => {
                 disabled
                 type="text"
                 value={
-                    projectDetails?.instituteId
+                  projectDetails?.instituteId
                     ? instituteList[`${projectDetails?.instituteId}`]
                     : ""
                 }
@@ -284,23 +260,51 @@ const EditForm = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {projectDetails?.sampleResponseList?.map((item:any,index:number) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
-                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
-                      <td>
-                        {item.sampleCount}
-                      </td>
-                      <td>
-                      </td>
-                    </tr>
-                  ))}
+                  {projectDetails?.sampleResponseList?.map(
+                    (item: any, index: number) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {
+                            sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                              ?.sampleType
+                          }
+                        </td>
+                        <td>
+                          {
+                            sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                              ?.sampleName
+                          }
+                        </td>
+                        <td>{item.sampleCount}</td>
+                        <td></td>
+                      </tr>
+                    )
+                  )}
                   {projectSampleList?.map((item, index) => (
-                    <tr key={projectDetails?.sampleResponseList?.length + index}>
-                      <td>{projectDetails?.sampleResponseList?.length + index + 1}</td>
-                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
-                      <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
+                    <tr
+                      key={
+                        (projectDetails?.sampleResponseList?.length || 0) +
+                        index
+                      }
+                    >
+                      <td>
+                        {(projectDetails?.sampleResponseList?.length || 0) +
+                          index +
+                          1}
+                      </td>
+                      <td>
+                        {
+                          sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                            ?.sampleType
+                        }
+                      </td>
+                      <td>
+                        {
+                          sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                            ?.sampleName
+                        }
+                      </td>
                       <td>
                         <input
                           type="text"
@@ -318,8 +322,18 @@ const EditForm = () => {
                       </td>
                     </tr>
                   ))}
-                  <tr key={projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}>
-                    <td>{projectDetails?.sampleResponseList?.length + projectSampleList?.length + 1}</td>
+                  <tr
+                    key={
+                      projectDetails?.sampleResponseList?.length ||
+                      0 + projectSampleList?.length ||
+                      0 + 1
+                    }
+                  >
+                    <td>
+                      {projectDetails?.sampleResponseList?.length ||
+                        0 + projectSampleList?.length ||
+                        0 + 1}
+                    </td>
                     <td>
                       <Form.Select
                         disabled={!projectDetails?.sampleResponseList?.length}
@@ -327,7 +341,16 @@ const EditForm = () => {
                         onChange={(e) => setNewSampleType(e.target.value)}
                       >
                         {allSampleType.map((sampleType) => (
-                          <option key={sampleType} className={sampleType==='Select Type'?'boldItalicText':''}>{sampleType}</option>
+                          <option
+                            key={sampleType}
+                            className={
+                              sampleType === "Select Type"
+                                ? "boldItalicText"
+                                : ""
+                            }
+                          >
+                            {sampleType}
+                          </option>
                         ))}
                       </Form.Select>
                     </td>

@@ -11,11 +11,6 @@ import {
   Alert,
 } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import {
-  instituteListCons,
-  sampleListConst,
-  projectListCons,
-} from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
@@ -25,7 +20,12 @@ import {
   sampleListOptionsMaker,
 } from "../services/commonFunctions";
 
-const RequestForm = () => {
+interface IRequestForm {
+  projectList: any;
+  instituteList: any;
+  allSampleList: any;
+}
+const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [researcherName, setResearcherName] = useState("");
@@ -38,7 +38,7 @@ const RequestForm = () => {
       Select Institute
     </option>,
   ]);
-  const [allSampleList, setAllSampleList] = useState([]);
+  const [allSampleList, setAllSampleList] = useState(props.allSampleList);
   const [allSampleType, setAllSampleType] = useState(["Select Type"]);
   const [projectSampleList, setProjectSampleList] = useState([]);
   const [newSampleType, setNewSampleType] = useState("sampleNameList Type");
@@ -55,55 +55,26 @@ const RequestForm = () => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    console.log(projectName)
-    console.log(!!projectName)
     const searchResults = onSearch(projectName);
     setResults(searchResults);
   }, [projectName]);
 
   useEffect(() => {
-    // console.log('Request Form')
-    // setInstituteList(instituteNameOptionsMaker(instituteListCons.sort((a,b)=>compare(a.instituteName,b.instituteName))));
-    Promise.all([
-      AxiosInstance.get("/projectList/fetchData"),
-      AxiosInstance.get("/instituteList/fetchData"),
-      AxiosInstance.get("/sampleInfoList/fetchData"),
-    ])
-      .then((res: any) => {
-        setProjectList(res[0]?.data);
-        setInstituteList(
-          instituteNameOptionsMaker(
-            res[1]?.data.sort((a: any, b: any) =>
-              compare(a.instituteName, b.instituteName)
-            )
-          )
-        );
-        setAllSampleList(
-          res[2]?.data.sort((a: any, b: any) =>
-            compare(a.sampleName, b.sampleName)
-          )
-        );
-      })
-      .catch((error: any) => {
-        setProjectList(projectListCons);
-        setInstituteList(
-          instituteNameOptionsMaker(
-            instituteListCons.sort((a, b) =>
-              compare(a.instituteName, b.instituteName)
-            )
-          )
-        );
-        setAllSampleList(
-          sampleListConst.sort((a, b) => compare(a.sampleName, b.sampleName))
-        );
-        console.log(error);
-      });
-    // console.log(projectList);
-  }, []);
+    console.log(props)
+    setProjectList(props.projectList);
+    setInstituteList(
+      instituteNameOptionsMaker(
+        props.instituteList.sort((a: any, b: any) =>
+          compare(a.instituteName, b.instituteName)
+        )
+      )
+    );
+    setAllSampleList(props.allSampleList);
+  }, [props]);
 
   useEffect(() => {
     // console.log(projectListHashMap)
-    if (projectListHashMap[`${projectName}`] === 1) {
+    if (projectListHashMap[`${projectName?.toLowerCase()}`] === 1) {
       setProjectNameAlreadyExists(true);
     } else setProjectNameAlreadyExists(false);
     //
@@ -112,7 +83,7 @@ const RequestForm = () => {
       projectSampleList?.length > 0 &&
       !!instituteName &&
       !!projectName &&
-      !!researcherName 
+      !!researcherName
     ) {
       setIsReadyForSubmit(true);
     } else setIsReadyForSubmit(false);
@@ -120,7 +91,7 @@ const RequestForm = () => {
 
   useEffect(() => {
     const temp: any = {};
-    allSampleList.forEach((sample) => {
+    allSampleList?.forEach((sample: any) => {
       temp[`${sample.sampleName}`] = sample.sampleId;
     });
     setSampleDetailsHashMap(temp);
@@ -129,13 +100,13 @@ const RequestForm = () => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(sampleListConst, newSampleType));
+    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType));
   }, [newSampleType]);
 
   useEffect(() => {
     const PLhash: { [key: string]: number } = {};
-    projectList.forEach((project) => {
-      PLhash[`${project.projectName}`] = 1;
+    projectList?.forEach((project: any) => {
+      PLhash[`${project?.projectName.toLowerCase()}`] = 1;
     });
     setProjectListHashMap(PLhash);
   }, [projectList]);
@@ -157,7 +128,7 @@ const RequestForm = () => {
 
   const deleteSample = (sampleName: string) => {
     const updatedProjectSampleList = projectSampleList.filter(
-      (field) => field.sampleName !== sampleName
+      (field) => field?.sampleName !== sampleName
     );
     setProjectSampleList(updatedProjectSampleList);
   };
@@ -284,17 +255,15 @@ const RequestForm = () => {
               )}
             </FormGroup>
           </Col>
-          <Col xs={6} className='alignMessageCenter'>
-          {projectNameAlreadyExists && (
-                <span className="colorRed">
-                  * Project Name already exist !! Please select other Name.
-                </span>
-              )}
-              {!projectNameAlreadyExists && !!projectName && (
-                <span className="colorGreen">
-                  Project Name is available!
-                </span>
-              )}
+          <Col xs={6} className="alignMessageCenter">
+            {projectNameAlreadyExists && (
+              <span className="colorRed">
+                * Project Name already exist !! Please select other Name.
+              </span>
+            )}
+            {!projectNameAlreadyExists && !!projectName && (
+              <span className="colorGreen">Project Name is available!</span>
+            )}
           </Col>
         </Row>
 
@@ -320,7 +289,13 @@ const RequestForm = () => {
               <Form.Label>Institute Name:</Form.Label>
               <Form.Select
                 value={instituteName}
-                onChange={(e) => setInstituteName(e.target.value==='Select Institute'?null:e.target.value)}
+                onChange={(e) =>
+                  setInstituteName(
+                    e.target.value === "Select Institute"
+                      ? null
+                      : e.target.value
+                  )
+                }
               >
                 {instituteList}
               </Form.Select>

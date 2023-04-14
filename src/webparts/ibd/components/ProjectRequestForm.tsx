@@ -16,7 +16,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
 
   return (
     <div className="boxShadow">
-      <h2 className="mainPageHeading mb-3">Raise Project Request</h2>
+      <h2 className="mainPageHeading mb-3">{isNewRequest? 'Raise' : 'Edit'} Project Request</h2>
       <div className="flex alignCenter">
         <Button
           className={

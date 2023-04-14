@@ -18,21 +18,12 @@ const App: React.FC<IApp> = ({ userDisplayName }) => {
   return (
     <Container>
       <Tabs id="my-tabs" activeKey={key} onSelect={(k) => setKey(k)}>
-        <Tab eventKey="tab1" title="Raise Sample Request">
+        <Tab eventKey="tab1" title="ADD/EDIT Sample">
           <ProjectRequestForm userDisplayName={userDisplayName}></ProjectRequestForm>
         </Tab>
          <Tab eventKey="tab2" title="IBD BioSample Mapping">
           <AdminDashBoard></AdminDashBoard>
         </Tab>
-         {/* <Tab eventKey="tab3" title="SearchBox">
-          <SearchBox></SearchBox>
-        </Tab> */}
-        {/*<Tab eventKey="tab4" title="DynamicTable">
-          <DynamicTable></DynamicTable>
-        </Tab> */}
-        {/* <Tab eventKey="tab4" title="DynamicTable">
-          <ProjectRequestForm2 userDisplayName={userDisplayName}></ProjectRequestForm2>
-        </Tab> */}
       </Tabs>
     </Container>
   )

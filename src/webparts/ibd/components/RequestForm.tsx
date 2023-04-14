@@ -55,6 +55,8 @@ const RequestForm = () => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
+    console.log(projectName)
+    console.log(!!projectName)
     const searchResults = onSearch(projectName);
     setResults(searchResults);
   }, [projectName]);
@@ -108,9 +110,9 @@ const RequestForm = () => {
     if (
       projectListHashMap[`${projectName}`] !== 1 &&
       projectSampleList?.length > 0 &&
-      instituteName !== "" &&
-      projectName !== "" &&
-      researcherName !== ""
+      !!instituteName &&
+      !!projectName &&
+      !!researcherName 
     ) {
       setIsReadyForSubmit(true);
     } else setIsReadyForSubmit(false);
@@ -270,7 +272,7 @@ const RequestForm = () => {
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {projectNameAlreadyExists && projectName != "" && (
+              {projectNameAlreadyExists && !!projectName && (
                 <Row className="dropDown">
                   <p className="boldItalicText">Already in use: </p>
                   <ul className="noDots">
@@ -288,7 +290,7 @@ const RequestForm = () => {
                   * Project Name already exist !! Please select other Name.
                 </span>
               )}
-              {!projectNameAlreadyExists && projectName != "" && (
+              {!projectNameAlreadyExists && !!projectName && (
                 <span className="colorGreen">
                   Project Name is available!
                 </span>
@@ -318,7 +320,7 @@ const RequestForm = () => {
               <Form.Label>Institute Name:</Form.Label>
               <Form.Select
                 value={instituteName}
-                onChange={(e) => setInstituteName(e.target.value)}
+                onChange={(e) => setInstituteName(e.target.value==='Select Institute'?null:e.target.value)}
               >
                 {instituteList}
               </Form.Select>
@@ -445,7 +447,7 @@ const RequestForm = () => {
       </Form>
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="primary">Request Submitted Successfully!.</Alert>
+          <Alert variant="success">Request Submitted Successfully!.</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

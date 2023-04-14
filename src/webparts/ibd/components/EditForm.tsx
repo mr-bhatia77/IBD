@@ -160,6 +160,7 @@ const EditForm = () => {
     AxiosInstance.put("/update/project", payLoad)
       .then((res: any) => {
         handleShow();
+        setProjectSampleList([]);
         AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
           .then((res) => {
             setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
@@ -177,6 +178,7 @@ const EditForm = () => {
       })
       .catch((error) => {
         handleShow();
+        setProjectSampleList([]);
         console.log(error);
         if (projectDetails?.projectId == 1) {
           setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
@@ -385,7 +387,7 @@ const EditForm = () => {
       </Form>
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="primary">Request Updated Successfully!.</Alert>
+          <Alert variant="success">Request Updated Successfully!.</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

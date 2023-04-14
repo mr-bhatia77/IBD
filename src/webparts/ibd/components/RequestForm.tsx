@@ -103,7 +103,7 @@ const RequestForm = () => {
 
   useEffect(() => {
     // console.log(projectListHashMap)
-    if (projectListHashMap[`${projectName.toLowerCase()}`] === 1) {
+    if (projectListHashMap[`${projectName?.toLowerCase()}`] === 1) {
       setProjectNameAlreadyExists(true);
     } else setProjectNameAlreadyExists(false);
     //

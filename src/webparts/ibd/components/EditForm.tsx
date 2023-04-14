@@ -195,7 +195,13 @@ const EditForm = () => {
   };
 
   const getProjectDetails = (e: any) => {
-    AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
+    if(e.target.value === 'Select Project')
+    {
+      setProjectDetails({});
+      setProjectSampleList([]);
+    }
+    else {
+      AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
         // setProjectSampleList([...res?.data?.sampleResponseList]);
@@ -213,11 +219,11 @@ const EditForm = () => {
           // );
         }
       });
+    }
   };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
   return (
     <>
       <Form onSubmit={handleSubmit} className="my-form">
@@ -297,8 +303,8 @@ const EditForm = () => {
                     </tr>
                   ))}
                   {projectSampleList?.map((item, index) => (
-                    <tr key={projectDetails?.sampleResponseList?.length||0 + index}>
-                      <td>{projectDetails?.sampleResponseList?.length||0 + index + 1}</td>
+                    <tr key={(projectDetails?.sampleResponseList || []).length + index}>
+                      <td>{(projectDetails?.sampleResponseList || []).length + index + 1}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleType}</td>
                       <td>{sampleIdToDetailsHashmap[`${item.sampleId}`].sampleName}</td>
                       <td>
@@ -318,8 +324,8 @@ const EditForm = () => {
                       </td>
                     </tr>
                   ))}
-                  <tr key={projectDetails?.sampleResponseList?.length||0 + projectSampleList?.length||0 + 1}>
-                    <td>{projectDetails?.sampleResponseList?.length||0 + projectSampleList?.length||0 + 1}</td>
+                  <tr key={(projectDetails?.sampleResponseList || []).length + projectSampleList?.length + 1}>
+                    <td>{(projectDetails?.sampleResponseList || []).length + projectSampleList?.length + 1}</td>
                     <td>
                       <Form.Select
                         disabled={!projectDetails?.sampleResponseList?.length}

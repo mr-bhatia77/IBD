@@ -1,15 +1,10 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button,Row,Col,Alert } from "react-bootstrap";
 import EditForm from "./EditForm";
 import RequestForm from "./RequestForm";
 import AxiosInstance from "../services/AxiosInstance";
 import { compare } from "../services/commonFunctions";
-import {
-  instituteListCons,
-  sampleListConst,
-  projectListCons,
-} from "../services/Constants";
 interface IProjectRequestForm {
   userDisplayName: string;
 }
@@ -23,6 +18,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
     instituteList: [],
     sampleList: [],
   });
+  const [errorState,setErrorState] = useState<boolean>(false);
 
   useEffect(() => {
     Promise.all([
@@ -41,14 +37,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
         setDataList(newDataList);
       })
       .catch((error: any) => {
-        const newDataList: any = {
-          projectList: projectListCons,
-          instituteList: instituteListCons,
-          sampleList: sampleListConst?.sort((a: any, b: any) =>
-            compare(a.sampleName, b.sampleName)
-          ),
-        };
-        setDataList(newDataList);
+        setErrorState(true);
         console.log(error);
       });
   }, []);
@@ -80,11 +69,28 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
           Edit Existing Request
         </Button>
       </div>
+      <Row className="mt-3 mb-3">
+            <Col xs={{span:10,offset:1}}>
+              {errorState && (
+                <Alert
+                  variant="danger"
+                  onClose={() => setErrorState(false)}
+                  dismissible
+                >
+                  <p>
+                    Looks like something went wrong! Try reloading the page or
+                    contact admin.
+                  </p>
+                </Alert>
+              )}
+            </Col>
+          </Row>
       {isNewRequest && (
         <RequestForm
           projectList={dataList.projectList}
           instituteList={dataList.instituteList}
           allSampleList={dataList.sampleList}
+          setErrorState={setErrorState}
         ></RequestForm>
       )}
       {!isNewRequest && (
@@ -92,6 +98,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
           projectList={dataList.projectList}
           instituteList={dataList.instituteList}
           allSampleList={dataList.sampleList}
+          setErrorState={setErrorState}
         ></EditForm>
       )}
     </div>

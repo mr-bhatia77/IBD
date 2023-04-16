@@ -24,6 +24,7 @@ interface IRequestForm {
   projectList: any;
   instituteList: any;
   allSampleList: any;
+  setErrorState:any;
 }
 const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [projectList, setProjectList] = useState([]);
@@ -51,7 +52,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState({state:false,message:''});
   const [results, setResults] = useState([]);
   const [sampleIdToDetailsHashmap ,setSampleIdToDetailsHashmap] = useState<any>({});
   const [showProjectError, setShowProjectError] = useState(false);
@@ -81,7 +82,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     } else setProjectNameAlreadyExists(false);
     //
     if (
-      projectListHashMap[`${projectName}`] !== 1 &&
+      !projectNameAlreadyExists &&
       projectSampleList?.length > 0 &&
       !!instituteName &&
       !!projectName &&
@@ -89,7 +90,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     ) {
       setIsReadyForSubmit(true);
     } else setIsReadyForSubmit(false);
-  }, [projectSampleList, instituteName, projectName, researcherName]);
+  }, [projectSampleList, instituteName, projectName, researcherName,projectNameAlreadyExists]);
 
   useEffect(() => {
     const temp: any = {};
@@ -183,7 +184,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     };
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
-        handleShow();
+        handleShow('Request Submitted Successfully!');
         setProjectName("");
         setInstituteName("");
         setResearcherName("");
@@ -197,23 +198,14 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
         ]);
         AxiosInstance.get("/projectList/fetchData").then((res) => {
           setProjectList(res?.data);
-        });
+        })
+        .catch((error)=>{
+          console.log(error);
+          props.setErrorState(true)
+        })
       })
       .catch((error) => {
-        handleShow();
-        // console.log(error);
-        // console.log(payLoad);
-        setProjectName("");
-        setInstituteName("");
-        setResearcherName("");
-        setProjectSampleList([]);
-        setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
-        setNewSampleCount(null);
-        setSampleNameList([
-          <option value="Select Sample" className="boldItalicText">
-            Select Sample
-          </option>,
-        ]);
+        handleShow('Something Went Wrong. please try again');
       });
   };
 
@@ -231,8 +223,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     ]);
   };
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => setShow({state:false,message:''});
+  const handleShow = (message:string) => setShow({state:true,message:message});
 
   return (
     <>
@@ -445,9 +437,9 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
           </Col>
         </Row>
       </Form>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show?.state} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="success">Request Submitted Successfully!.</Alert>
+          <Alert variant={show?.message === 'Request Submitted Successfully!'?"success":"danger"}>{show?.message}</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Table, Modal, Alert } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
-import { projectDetailsCons, projectDetailsCons2 } from "../services/Constants";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
@@ -16,6 +15,7 @@ interface IEditForm {
   projectList: any;
   instituteList: any;
   allSampleList: any;
+  setErrorState:any;
 }
 
 const EditForm: React.FunctionComponent<IEditForm> = (props) => {
@@ -42,7 +42,7 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
     {}
   );
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState({state:false,message:''});
 
   useEffect(() => {
     // console.log(props);
@@ -134,40 +134,21 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
     };
     AxiosInstance.put("/update/project", payLoad)
       .then((res: any) => {
-        handleShow();
+        handleShow('Request Submitted Successfully!');
         setProjectSampleList([]);
         AxiosInstance.get(`/projectInfo/${projectDetails?.projectId}/fetchData`)
           .then((res) => {
             setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-            // setProjectSampleList([...res?.data?.sampleResponseList]);
           })
           .catch((error) => {
-            if (projectDetails?.projectId == 1) {
-              setProjectDetails(projectDetailsCons);
-              // setProjectSampleList(projectDetailsCons.sampleResponseList);
-            } else {
-              setProjectDetails(projectDetailsCons2);
-              // setProjectSampleList(projectDetailsCons2.sampleResponseList);
-            }
-          });
+            console.log(error);
+            props.setErrorState(true);
       })
+    })
       .catch((error) => {
-        handleShow();
-        setProjectSampleList([]);
-        console.log(error);
-        if (projectDetails?.projectId == 1) {
-          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
-          // setProjectSampleList(
-          //   JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
-          // );
-        } else {
-          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
-          // setProjectSampleList(
-          //   JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
-          // );
-        }
+        handleShow('Something Went Wrong. please try again');
       });
-  };
+}
 
   const getProjectDetails = (e: any) => {
     if(e.target.value === 'Select Project') {
@@ -178,26 +159,16 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
       AxiosInstance.get(`/projectInfo/${e.target.value}/fetchData`)
       .then((res) => {
         setProjectDetails(JSON.parse(JSON.stringify(res?.data)));
-        // setProjectSampleList([...res?.data?.sampleResponseList]);
       })
       .catch((error) => {
-        if (e.target.value == 1) {
-          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons)));
-          // setProjectSampleList(
-          //   JSON.parse(JSON.stringify(projectDetailsCons)).sampleResponseList
-          // );
-        } else {
-          setProjectDetails(JSON.parse(JSON.stringify(projectDetailsCons2)));
-          // setProjectSampleList(
-          //   JSON.parse(JSON.stringify(projectDetailsCons2)).sampleResponseList
-          // );
-        }
+       console.log(error);
+       props.setErrorState(true);
       });
     }
   };
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => setShow({state:false,message:''});
+  const handleShow = (message:string) => setShow({state:true,message:message});
   return (
     <>
       <Form onSubmit={handleSubmit} className="my-form">
@@ -408,9 +379,9 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
           </Col>
         </Row>
       </Form>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show?.state} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant="success">Request Updated Successfully!.</Alert>
+          <Alert variant={show?.message === 'Request Submitted Successfully!'?"success":"danger"}>{show?.message}</Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

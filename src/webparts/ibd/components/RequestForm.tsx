@@ -25,6 +25,7 @@ interface IRequestForm {
   instituteList: any;
   allSampleList: any;
   setErrorState:any;
+  setDataList:any;
 }
 const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [projectList, setProjectList] = useState([]);
@@ -197,7 +198,9 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
           </option>,
         ]);
         AxiosInstance.get("/projectList/fetchData").then((res) => {
-          setProjectList(res?.data);
+          props.setDataList((prevState:any)=> {
+            return {...prevState,projectList:res?.data}
+          });
         })
         .catch((error)=>{
           console.log(error);

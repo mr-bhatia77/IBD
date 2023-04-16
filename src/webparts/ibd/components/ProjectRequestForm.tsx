@@ -91,6 +91,7 @@ const ProjectRequestForm: React.FunctionComponent<IProjectRequestForm> = ({
           instituteList={dataList.instituteList}
           allSampleList={dataList.sampleList}
           setErrorState={setErrorState}
+          setDataList={setDataList}
         ></RequestForm>
       )}
       {!isNewRequest && (

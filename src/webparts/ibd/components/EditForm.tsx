@@ -49,7 +49,7 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
     setProjectList(
       projectNameOptionsMaker(
         props?.projectList?.sort((a: any, b: any) =>
-          compare(a.projectName, b.projectName)
+          compare(a.projectName?.toLowerCase(), b.projectName?.toLowerCase())
         )
       )
     );

@@ -53,6 +53,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
   const [show, setShow] = useState(false);
   const [results, setResults] = useState([]);
+  const [sampleIdToDetailsHashmap ,setSampleIdToDetailsHashmap] = useState<any>({});
+  const [showProjectError, setShowProjectError] = useState(false);
 
   useEffect(() => {
     const searchResults = onSearch(projectName);
@@ -111,14 +113,25 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     setProjectListHashMap(PLhash);
   }, [projectList]);
 
+  useEffect(() => {
+    const sampleIdToDetails: any = {};
+    allSampleList?.forEach((sample:any) => {
+      sampleIdToDetails[`${sample.sampleId}`] = {
+        sampleType: sample.sampleType,
+        sampleName: sample.sampleName,
+      };
+    });
+    setSampleIdToDetailsHashmap(sampleIdToDetails);
+    // console.log(sampleNameToIdHashMap)
+    setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
+  }, [allSampleList]);
+
   const handleAdd = () => {
     // console.log(sampleDetailsHashMap);
     setProjectSampleList([
       ...projectSampleList,
       {
         sampleId: sampleDetailsHashMap[`${newSampleName}`],
-        sampleType: newSampleType,
-        sampleName: newSampleName,
         sampleCount: newSampleCount,
       },
     ]);
@@ -233,6 +246,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
             <FormGroup as={Col} className="mb-3">
               <Form.Label for="projectName">Project Name: </Form.Label>
               <Form.Control
+               onFocus={()=>setShowProjectError(true)}
+               onBlur={()=>setShowProjectError(false)}
                 required
                 type="text"
                 name="projectName"
@@ -243,7 +258,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {projectNameAlreadyExists && !!projectName && (
+              {showProjectError && projectNameAlreadyExists && !!projectName && (
                 <Row className="dropDown">
                   <p className="boldItalicText">Already in use: </p>
                   <ul className="noDots">
@@ -261,7 +276,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                 * Project Name already exist !! Please select other Name.
               </span>
             )}
-            {!projectNameAlreadyExists && !!projectName && (
+            {showProjectError && !projectNameAlreadyExists && !!projectName && (
               <span className="colorGreen">Project Name is available!</span>
             )}
           </Col>
@@ -322,10 +337,20 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                 <tbody>
                   {projectSampleList?.map((item, index) => (
                     <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.sampleType}</td>
-                      <td>{item.sampleName}</td>
-                      <td>
+                    <td>{index + 1}</td>
+                    <td>
+                      {
+                        sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                          ?.sampleType
+                      }
+                    </td>
+                    <td>
+                      {
+                        sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                          ?.sampleName
+                      }
+                    </td>
+                    <td>
                         <input
                           type="text"
                           value={item.sampleCount}

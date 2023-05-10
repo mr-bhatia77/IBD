@@ -24,13 +24,14 @@ interface IRequestForm {
   projectList: any;
   instituteList: any;
   allSampleList: any;
-  setErrorState:any;
-  setDataList:any;
+  setErrorState: any;
+  setDataList: any;
 }
 const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [researcherName, setResearcherName] = useState("");
+  const [secondaryInstituteName, setSecondaryInstituteName] = useState("");
   const [projectNameAlreadyExists, setProjectNameAlreadyExists] =
     useState(false);
   const [projectListHashMap, setProjectListHashMap] = useState<any>({});
@@ -53,9 +54,11 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [newSampleCount, setNewSampleCount] = useState(null);
   const [sampleDetailsHashMap, setSampleDetailsHashMap] = useState<any>({});
   const [isReadyForSubmit, setIsReadyForSubmit] = useState(false);
-  const [show, setShow] = useState({state:false,message:''});
+  const [show, setShow] = useState({ state: false, message: "" });
   const [results, setResults] = useState([]);
-  const [sampleIdToDetailsHashmap ,setSampleIdToDetailsHashmap] = useState<any>({});
+  const [sampleIdToDetailsHashmap, setSampleIdToDetailsHashmap] = useState<any>(
+    {}
+  );
   const [showProjectError, setShowProjectError] = useState(false);
 
   useEffect(() => {
@@ -89,9 +92,20 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
       !!projectName &&
       !!researcherName
     ) {
-      setIsReadyForSubmit(true);
+      if (instituteName === "AddNew" && secondaryInstituteName)
+        setIsReadyForSubmit(true);
+      else if (instituteName === "AddNew" && !secondaryInstituteName)
+        setIsReadyForSubmit(false);
+      else setIsReadyForSubmit(true);
     } else setIsReadyForSubmit(false);
-  }, [projectSampleList, instituteName, projectName, researcherName,projectNameAlreadyExists]);
+  }, [
+    projectSampleList,
+    instituteName,
+    projectName,
+    researcherName,
+    projectNameAlreadyExists,
+    secondaryInstituteName,
+  ]);
 
   useEffect(() => {
     const temp: any = {};
@@ -117,7 +131,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
 
   useEffect(() => {
     const sampleIdToDetails: any = {};
-    allSampleList?.forEach((sample:any) => {
+    allSampleList?.forEach((sample: any) => {
       sampleIdToDetails[`${sample.sampleId}`] = {
         sampleType: sample.sampleType,
         sampleName: sample.sampleName,
@@ -141,9 +155,9 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     setNewSampleCount("");
   };
 
-  const deleteSample = (sampleName: string) => {
+  const deleteSample = (index: number) => {
     const updatedProjectSampleList = projectSampleList.filter(
-      (field) => field?.sampleName !== sampleName
+      (field, arrIndex) => arrIndex !== index
     );
     setProjectSampleList(updatedProjectSampleList);
   };
@@ -177,17 +191,22 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    const payLoad = {
+    const payLoad: { [key: string]: any } = {
       projectName: projectName,
       researcherName: researcherName,
       instituteId: instituteName,
       sampleRequestList: projectSampleList,
     };
+    if (instituteName === "AddNew") {
+      payLoad.instituteId = 0;
+      payLoad.instituteName = secondaryInstituteName;
+    }
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
-        handleShow('Request Submitted Successfully!');
+        handleShow("Request Submitted Successfully!");
         setProjectName("");
         setInstituteName("");
+        setSecondaryInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
         setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
@@ -197,18 +216,19 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
             Select Sample
           </option>,
         ]);
-        AxiosInstance.get("/projectList/fetchData").then((res) => {
-          props.setDataList((prevState:any)=> {
-            return {...prevState,projectList:res?.data}
+        AxiosInstance.get("/projectList/fetchData")
+          .then((res) => {
+            props.setDataList((prevState: any) => {
+              return { ...prevState, projectList: res?.data };
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            props.setErrorState(true);
           });
-        })
-        .catch((error)=>{
-          console.log(error);
-          props.setErrorState(true)
-        })
       })
       .catch((error) => {
-        handleShow('Something Went Wrong. please try again');
+        handleShow("Something Went Wrong. please try again");
       });
   };
 
@@ -216,6 +236,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     setProjectName(null);
     setNewSampleCount(null);
     setInstituteName(null);
+    setSecondaryInstituteName("");
     setResearcherName("");
     setProjectSampleList([]);
     setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
@@ -226,8 +247,9 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     ]);
   };
 
-  const handleClose = () => setShow({state:false,message:''});
-  const handleShow = (message:string) => setShow({state:true,message:message});
+  const handleClose = () => setShow({ state: false, message: "" });
+  const handleShow = (message: string) =>
+    setShow({ state: true, message: message });
 
   return (
     <>
@@ -241,8 +263,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
             <FormGroup as={Col} className="mb-3">
               <Form.Label for="projectName">Project Name: </Form.Label>
               <Form.Control
-               onFocus={()=>setShowProjectError(true)}
-               onBlur={()=>setShowProjectError(false)}
+                onFocus={() => setShowProjectError(true)}
+                onBlur={() => setShowProjectError(false)}
                 required
                 type="text"
                 name="projectName"
@@ -253,16 +275,18 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                   setProjectName(e.target.value === "" ? null : e.target.value)
                 }
               />
-              {showProjectError && projectNameAlreadyExists && !!projectName && (
-                <Row className="dropDown">
-                  <p className="boldItalicText">Already in use: </p>
-                  <ul className="noDots">
-                    {results.map((result, index) => (
-                      <li key={index}>{result}</li>
-                    ))}
-                  </ul>
-                </Row>
-              )}
+              {showProjectError &&
+                projectNameAlreadyExists &&
+                !!projectName && (
+                  <Row className="dropDown">
+                    <p className="boldItalicText">Already in use: </p>
+                    <ul className="noDots">
+                      {results.map((result, index) => (
+                        <li key={index}>{result}</li>
+                      ))}
+                    </ul>
+                  </Row>
+                )}
             </FormGroup>
           </Col>
           <Col xs={6} className="alignMessageCenter">
@@ -294,6 +318,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
               ></Form.Control>
             </Form.Group>
           </Col>
+        </Row>
+        <Row>
           <Col xs={6}>
             <Form.Group as={Col}>
               <Form.Label>Institute Name:</Form.Label>
@@ -311,9 +337,27 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
               </Form.Select>
             </Form.Group>
           </Col>
+          {instituteName === "AddNew" && (
+            <Col xs={6}>
+              <Form.Group as={Col}>
+                <Form.Label>Enter Institute Name:</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  value={secondaryInstituteName}
+                  placeholder="Enter Institute Name"
+                  onChange={(e) =>
+                    setSecondaryInstituteName(
+                      e.target.value === "" ? null : e.target.value
+                    )
+                  }
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+          )}
         </Row>
         {/* sample select */}
-        <Row style={{ marginLeft: "0px" }}>
+        <Row style={{ marginLeft: "0px" }} className="mt-3">
           <hr />
           <h6>Add Samples:</h6>
           <Row className="mb-3">
@@ -332,20 +376,20 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                 <tbody>
                   {projectSampleList?.map((item, index) => (
                     <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>
-                      {
-                        sampleIdToDetailsHashmap[`${item?.sampleId}`]
-                          ?.sampleType
-                      }
-                    </td>
-                    <td>
-                      {
-                        sampleIdToDetailsHashmap[`${item?.sampleId}`]
-                          ?.sampleName
-                      }
-                    </td>
-                    <td>
+                      <td>{index + 1}</td>
+                      <td>
+                        {
+                          sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                            ?.sampleType
+                        }
+                      </td>
+                      <td>
+                        {
+                          sampleIdToDetailsHashmap[`${item?.sampleId}`]
+                            ?.sampleName
+                        }
+                      </td>
+                      <td>
                         <input
                           type="text"
                           value={item.sampleCount}
@@ -355,7 +399,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
                       <td>
                         <Button
                           variant="danger"
-                          onClick={() => deleteSample(item.sampleName)}
+                          onClick={() => deleteSample(index)}
                         >
                           <DeleteIcon />
                         </Button>
@@ -442,7 +486,15 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
       </Form>
       <Modal show={show?.state} onHide={handleClose}>
         <Modal.Body>
-          <Alert variant={show?.message === 'Request Submitted Successfully!'?"success":"danger"}>{show?.message}</Alert>
+          <Alert
+            variant={
+              show?.message === "Request Submitted Successfully!"
+                ? "success"
+                : "danger"
+            }
+          >
+            {show?.message}
+          </Alert>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

@@ -85,6 +85,12 @@
   color:green !important;
   font-size:small;
 }
+
+.blueItalicText{
+  font-size: small;
+  color:#0D6EF2;
+  font-style: italic;
+}
 /* ---------------------------------------------------------------------------- */
 .button-label {
   display: inline-block;

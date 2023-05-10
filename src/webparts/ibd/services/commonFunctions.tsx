@@ -2,7 +2,8 @@ import * as React from 'react';
 
 export const instituteNameOptionsMaker = (instituteList: any[]) => {
     const instituteListOptions: any[] = [
-        <option value="Select Institute" className="boldItalicText">Select Institute</option>
+        <option value="Select Institute" className="boldItalicText">Select Institute</option>,
+        <option value="AddNew" className="blueItalicText">Other</option>
     ];
     if (instituteList?.length) {
       instituteList.forEach((item: any) => {
@@ -11,6 +12,7 @@ export const instituteNameOptionsMaker = (instituteList: any[]) => {
         );
       });
     }
+    instituteListOptions.push(<option value="AddNew" className="blueItalicText">other</option>)
     return instituteListOptions;
   };
 

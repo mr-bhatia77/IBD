@@ -9,17 +9,17 @@ import {
   Table,
   Modal,
   Alert,
+  ListGroup,
 } from "react-bootstrap";
 import AxiosInstance from "../services/AxiosInstance";
 import DeleteIcon from "../services/DeleteIcon";
 import "./ProjectRequestForm.css";
 import {
-  instituteNameOptionsMaker,
   compare,
   findSampleTypes,
   sampleListOptionsMaker,
 } from "../services/commonFunctions";
-
+// import SelectableSearchBox from "./SelectableSearchBox";
 interface IRequestForm {
   projectList: any;
   instituteList: any;
@@ -31,16 +31,11 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   const [projectList, setProjectList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [researcherName, setResearcherName] = useState("");
-  const [secondaryInstituteName, setSecondaryInstituteName] = useState("");
   const [projectNameAlreadyExists, setProjectNameAlreadyExists] =
     useState(false);
   const [projectListHashMap, setProjectListHashMap] = useState<any>({});
   const [instituteName, setInstituteName] = useState("");
-  const [instituteList, setInstituteList] = useState([
-    <option value="Select Institute" className="boldItalicText">
-      Select Institute
-    </option>,
-  ]);
+  const [instituteListArray, setInstituteListArray] = useState([]);
   const [allSampleList, setAllSampleList] = useState(props.allSampleList);
   const [allSampleType, setAllSampleType] = useState(["Select Type"]);
   const [projectSampleList, setProjectSampleList] = useState([]);
@@ -60,6 +55,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     {}
   );
   const [showProjectError, setShowProjectError] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [showList, setShowList] = useState(false);
 
   useEffect(() => {
     const searchResults = onSearch(projectName);
@@ -69,18 +66,11 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   useEffect(() => {
     // console.log(props)
     setProjectList(props.projectList);
-    setInstituteList(
-      instituteNameOptionsMaker(
-        props.instituteList.sort((a: any, b: any) =>
-          compare(a.instituteName, b.instituteName)
-        )
-      )
-    );
     setAllSampleList(props.allSampleList);
   }, [props]);
 
   useEffect(() => {
-    // console.log(projectListHashMap)
+    // console.log(instituteName);
     if (projectListHashMap[`${projectName?.toLowerCase()}`] === 1) {
       setProjectNameAlreadyExists(true);
     } else setProjectNameAlreadyExists(false);
@@ -91,20 +81,15 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
       !!instituteName &&
       !!projectName &&
       !!researcherName
-    ) {
-      if (instituteName === "AddNew" && secondaryInstituteName)
-        setIsReadyForSubmit(true);
-      else if (instituteName === "AddNew" && !secondaryInstituteName)
-        setIsReadyForSubmit(false);
-      else setIsReadyForSubmit(true);
-    } else setIsReadyForSubmit(false);
+    )
+      setIsReadyForSubmit(true);
+    else setIsReadyForSubmit(false);
   }, [
     projectSampleList,
     instituteName,
     projectName,
     researcherName,
     projectNameAlreadyExists,
-    secondaryInstituteName,
   ]);
 
   useEffect(() => {
@@ -141,6 +126,14 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     // console.log(sampleNameToIdHashMap)
     setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
   }, [allSampleList]);
+
+  useEffect(() => {
+    const newInstituteList = props.instituteList
+      .map((institute: any) => institute.instituteName)
+      .sort((a: any, b: any) => compare(a.toLowerCase(), b.toLowerCase()));
+    setInstituteListArray(newInstituteList);
+    setFilteredOptions(newInstituteList);
+  }, [props.instituteList]);
 
   const handleAdd = () => {
     // console.log(sampleDetailsHashMap);
@@ -189,24 +182,45 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     return filteredResults;
   };
 
+  const handleSearchChange = (event: any) => {
+    // console.log(event.target.value)
+    const searchText = event.target.value;
+    setInstituteName(searchText);
+
+    const filteredOptions = instituteListArray?.filter((option: any) =>
+      option.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredOptions(filteredOptions);
+  };
+
+  const handleSelect = (option?: any) => {
+    if (option) {
+      setInstituteName(option);
+    }
+    setShowList(false);
+  };
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const payLoad: { [key: string]: any } = {
       projectName: projectName,
       researcherName: researcherName,
-      instituteId: instituteName,
       sampleRequestList: projectSampleList,
     };
-    if (instituteName === "AddNew") {
-      payLoad.instituteId = 0;
-      payLoad.instituteName = secondaryInstituteName;
-    }
+    const instituteId = props.instituteList.find(
+      (institute: any) =>
+        institute?.instituteName?.toLowerCase() === instituteName?.toLowerCase()
+    )?.instituteId;
+    // check if instituteId exist
+    instituteId
+      ? (payLoad.instituteId = instituteId)
+      : (payLoad.instituteName = instituteName);
+    // console.log(payLoad);
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
         handleShow("Request Submitted Successfully!");
         setProjectName("");
         setInstituteName("");
-        setSecondaryInstituteName("");
         setResearcherName("");
         setProjectSampleList([]);
         setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
@@ -236,7 +250,6 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     setProjectName(null);
     setNewSampleCount(null);
     setInstituteName(null);
-    setSecondaryInstituteName("");
     setResearcherName("");
     setProjectSampleList([]);
     setAllSampleType(["Select Type", ...findSampleTypes(allSampleList)]);
@@ -318,43 +331,39 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
               ></Form.Control>
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col xs={6}>
-            <Form.Group as={Col}>
-              <Form.Label>Institute Name:</Form.Label>
-              <Form.Select
+          <Col>
+            <Form.Group controlId="instituteName">
+              <Form.Label>Institute Name: </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Institute Name"
                 value={instituteName}
-                onChange={(e) =>
-                  setInstituteName(
-                    e.target.value === "Select Institute"
-                      ? null
-                      : e.target.value
-                  )
-                }
-              >
-                {instituteList}
-              </Form.Select>
+                onChange={handleSearchChange}
+                onFocus={() => setShowList(true)}
+                onBlur={() => handleSelect()}
+              />
+              {showList && (
+                <ListGroup className="searchList">
+                  {filteredOptions.map((option: any) => (
+                    <ListGroup.Item
+                      className="searchListItem"
+                      key={option}
+                      active={option === instituteName}
+                      onMouseDown={() => handleSelect(option)}
+                    >
+                      {option}
+                    </ListGroup.Item>
+                  ))}
+                  {!filteredOptions?.length && (
+                    <ListGroup.Item className="blueItalicText">
+                      No matches Found! This Institute Name will be added as a
+                      new entry!
+                    </ListGroup.Item>
+                  )}
+                </ListGroup>
+              )}
             </Form.Group>
           </Col>
-          {instituteName === "AddNew" && (
-            <Col xs={6}>
-              <Form.Group as={Col}>
-                <Form.Label>Enter Institute Name:</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  value={secondaryInstituteName}
-                  placeholder="Enter Institute Name"
-                  onChange={(e) =>
-                    setSecondaryInstituteName(
-                      e.target.value === "" ? null : e.target.value
-                    )
-                  }
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-          )}
         </Row>
         {/* sample select */}
         <Row style={{ marginLeft: "0px" }} className="mt-3">

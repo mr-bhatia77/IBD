@@ -91,6 +91,21 @@
   color:#0D6EF2;
   font-style: italic;
 }
+
+.searchList{
+  position: absolute;
+  z-index: 5;
+  max-height: 40vh;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  width: 35%;
+}
+
+.searchListItem:hover{
+  background-color: blue;
+  color: white;
+  cursor: pointer;
+}
 /* ---------------------------------------------------------------------------- */
 .button-label {
   display: inline-block;

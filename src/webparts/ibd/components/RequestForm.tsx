@@ -337,6 +337,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
               <Form.Control
                 type="text"
                 placeholder="Enter Institute Name"
+                autoComplete="off"
                 value={instituteName}
                 onChange={handleSearchChange}
                 onFocus={() => setShowList(true)}

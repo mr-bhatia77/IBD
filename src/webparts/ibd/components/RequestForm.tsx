@@ -103,7 +103,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType));
+    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType,projectSampleList));
   }, [newSampleType]);
 
   useEffect(() => {

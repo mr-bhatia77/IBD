@@ -48,14 +48,19 @@ export const instituteNameOptionsMaker = (instituteList: any[]) => {
   return Object.keys(sampleTypeHashMap);
   }
 
-  export const sampleListOptionsMaker =(sampleList:any[], sampleType:string)=> {
+  export const sampleListOptionsMaker =(sampleList:any[], sampleType:string,projectSampleList?:any[])=> {
+    // console.log(projectSampleList)
+    const existingSamplesId:{[key:string]:number} ={}
+     projectSampleList.forEach((sample)=>{
+      existingSamplesId[`${sample.sampleId}`] = 1;
+    })
     const sampleListOptions: any[] = [
       <option value="Select Sample" className="boldItalicText">Select Sample</option>
   ];
   if (sampleList?.length) {
     sampleList.forEach((item: any) => {
       // console.log(item)
-      item && (item.sampleType === sampleType) && sampleListOptions.push(
+      item && (item.sampleType === sampleType && !existingSamplesId[`${item.sampleId}`]) && sampleListOptions.push(
         <option value={item.sampleName}>{item.sampleName}</option>
       );
     });

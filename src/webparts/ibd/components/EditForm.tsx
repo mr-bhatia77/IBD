@@ -92,7 +92,7 @@ const EditForm: React.FunctionComponent<IEditForm> = (props) => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType));
+    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType,projectSampleList));
   }, [newSampleType]);
 
   const handleAdd = () => {

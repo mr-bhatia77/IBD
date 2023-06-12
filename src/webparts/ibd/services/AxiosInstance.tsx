@@ -9,4 +9,5 @@ export default AxiosInstance;
 
 //'http://localhost:8080/tsdata'
 //'https://analytics.crohnscolitisfoundation.org/tsdata'
-// 'http://52.207.0.145:8081/ibd'
+//  'http://52.207.0.145:8081/ibd'
+// add this to all calls ?userName=${userEmail}`

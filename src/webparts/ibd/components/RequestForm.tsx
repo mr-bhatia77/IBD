@@ -103,7 +103,9 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   }, [allSampleList]);
 
   useEffect(() => {
-    setSampleNameList(sampleListOptionsMaker(allSampleList, newSampleType,projectSampleList));
+    setSampleNameList(
+      sampleListOptionsMaker(allSampleList, newSampleType, projectSampleList)
+    );
   }, [newSampleType]);
 
   useEffect(() => {
@@ -212,10 +214,23 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
         institute?.instituteName?.toLowerCase() === instituteName?.toLowerCase()
     )?.instituteId;
     // check if instituteId exist
-    instituteId
-      ? (payLoad.instituteId = instituteId)
-      : (payLoad.instituteName = instituteName);
-    // console.log(payLoad);
+    if (instituteId) submitProjectRequest(payLoad);
+    else {
+      AxiosInstance.post("/add/institute")
+        .then((res: any) => {
+          const instituteId = res?.split("id:")?.[1];
+          payLoad.instituteId = instituteId;
+          submitProjectRequest(payLoad);
+        })
+        .catch((err: any) => {
+          const instituteId = "New Institute added at id:49".split("id:")?.[1];
+          payLoad.instituteId = instituteId;
+          submitProjectRequest(payLoad);
+        });
+    }
+  };
+
+  const submitProjectRequest = (payLoad: any) => {
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
         handleShow("Request Submitted Successfully!");

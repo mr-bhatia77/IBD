@@ -214,23 +214,22 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
         institute?.instituteName?.toLowerCase() === instituteName?.toLowerCase()
     )?.instituteId;
     // check if instituteId exist
-    if (instituteId) submitProjectRequest(payLoad);
+    if (instituteId) submitProjectRequest(payLoad,false);
     else {
-      AxiosInstance.post("/add/institute")
+      AxiosInstance.post("/add/institute",instituteName)
         .then((res: any) => {
           const instituteId = res?.split("id:")?.[1];
           payLoad.instituteId = instituteId;
-          submitProjectRequest(payLoad);
+          submitProjectRequest(payLoad,true);
         })
         .catch((err: any) => {
-          const instituteId = "New Institute added at id:49".split("id:")?.[1];
-          payLoad.instituteId = instituteId;
-          submitProjectRequest(payLoad);
-        });
+          console.log(err);
+            props.setErrorState(true);
+          });
     }
   };
 
-  const submitProjectRequest = (payLoad: any) => {
+  const submitProjectRequest = (payLoad: any,isNewInstituteAdded:boolean) => {
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
         handleShow("Request Submitted Successfully!");
@@ -245,7 +244,8 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
             Select Sample
           </option>,
         ]);
-        AxiosInstance.get("/projectList/fetchData")
+        if(!isNewInstituteAdded){
+          AxiosInstance.get("/projectList/fetchData")
           .then((res) => {
             props.setDataList((prevState: any) => {
               return { ...prevState, projectList: res?.data };
@@ -255,6 +255,19 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
             console.log(error);
             props.setErrorState(true);
           });
+        }
+        else {
+          Promise.all([AxiosInstance.get("/projectList/fetchData"),AxiosInstance.get("/instituteList/fetchData")])
+          .then((res:any) => {
+            props.setDataList((prevState: any) => {
+              return { ...prevState, projectList: res?.[0]?.data,instituteList: res?.[1]?.data };
+            });
+          })
+          .catch((error:any) => {
+            console.log(error);
+            props.setErrorState(true);
+          });
+        }
       })
       .catch((error) => {
         handleShow("Something Went Wrong. please try again");

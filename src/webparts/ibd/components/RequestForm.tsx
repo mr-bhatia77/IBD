@@ -214,7 +214,10 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
         institute?.instituteName?.toLowerCase() === instituteName?.toLowerCase()
     )?.instituteId;
     // check if instituteId exist
-    if (instituteId) submitProjectRequest(payLoad,false);
+    if (instituteId) {
+      payLoad.instituteId = instituteId;
+      submitProjectRequest(payLoad,false);
+    }
     else {
       AxiosInstance.post("/add/institute",instituteName)
         .then((res: any) => {
@@ -230,6 +233,7 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
   };
 
   const submitProjectRequest = (payLoad: any,isNewInstituteAdded:boolean) => {
+    // console.log(payLoad,isNewInstituteAdded)
     AxiosInstance.post("/add/project", payLoad)
       .then((res: any) => {
         handleShow("Request Submitted Successfully!");

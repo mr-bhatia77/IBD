@@ -221,8 +221,10 @@ const RequestForm: React.FunctionComponent<IRequestForm> = (props) => {
     else {
       AxiosInstance.post("/add/institute",instituteName)
         .then((res: any) => {
-          const instituteId = res?.split("id:")?.[1];
+          // console.log(res)
+          const instituteId = res?.data?.split("id:")?.[1];
           payLoad.instituteId = instituteId;
+          // console.log(payLoad)
           submitProjectRequest(payLoad,true);
         })
         .catch((err: any) => {

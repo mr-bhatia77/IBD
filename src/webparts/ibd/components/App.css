@@ -56,6 +56,56 @@
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1) !important; 
   border: 3px solid #0D6EF2;
 }
+.noDots{
+  list-style: none;
+}
+.dropDown{
+  width:40%;
+  max-height: 30vh;
+  overflow-y: scroll;
+  overflow-x:scroll;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: auto !important;
+  position: absolute;
+  background-color: white;
+  z-index: 5;
+}
+
+.alignMessageCenter{
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+}
+.colorRed{
+  color:red !important;
+  font-size:small;
+}
+
+.colorGreen{
+  color:green !important;
+  font-size:small;
+}
+
+.blueItalicText{
+  font-size: small;
+  color:#0D6EF2;
+  font-style: italic;
+}
+
+.searchList{
+  position: absolute;
+  z-index: 5;
+  max-height: 40vh;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  width: 35%;
+}
+
+.searchListItem:hover{
+  background-color: blue;
+  color: white;
+  cursor: pointer;
+}
 /* ---------------------------------------------------------------------------- */
 .button-label {
   display: inline-block;
